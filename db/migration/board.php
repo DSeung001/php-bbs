@@ -1,14 +1,8 @@
 <?php
 
-$config = require 'config.php';
-
+$conn = require '../connection.php';
 
 try {
-    // 아래 코드가 공통되는게 싫긴한대
-    $dsn = "mysql:host={$config['DB_HOSTNAME']};dbname={$config['DB_NAME']};charset=utf8";
-    $conn = new PDO($dsn, $config['DB_USER'], $config['DB_PASSWORD']);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
     $tableName = "board";
 
     // 테이블이 존재하는지 확인
@@ -25,6 +19,7 @@ try {
             hit INT(6) UNSIGNED DEFAULT 0,
             lock_post INT(1) UNSIGNED DEFAULT 0,
             boardcol VARCHAR(45),
+            thumbsup INT(6) UNSIGNED DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
