@@ -22,12 +22,12 @@ include "part/header.php";
     <table class="table table-bordered">
         <thead>
         <tr class="text-center">
-            <th width="70">번호</th>
-            <th width="500">제목</th>
-            <th width="120">글쓴이</th>
+            <th width="80">번호</th>
+            <th width="300">제목</th>
+            <th width="100">글쓴이</th>
+            <th width="80">추천수</th>
+            <th width="80">조회수</th>
             <th width="100">작성일</th>
-            <th width="100">추천수</th>
-            <th width="100">조회수</th>
         </tr>
         </thead>
         <tbody>
@@ -37,28 +37,31 @@ include "part/header.php";
         // board테이블에서 idx를 기준으로 내림차순해서 10개까지 표시
         $list = $conn->query("select * from posts order by idx desc limit 0,10")->fetchAll();
         if ($list) {
-            foreach ($list as $item) {
+            foreach ($list as $post) {
                 //title변수에 DB에서 가져온 title을 선택
-                $title = $item["title"];
+                $title = $post["title"];
                 if (strlen($title) > 30) {
                     //title이 30을 넘어서면 ...표시
-                    $title = str_replace($item["title"], mb_substr($item["title"], 0, 30, "utf-8") . "...", $item["title"]);
+                    $title = str_replace($post["title"], mb_substr($post["title"], 0, 30, "utf-8") . "...", $post["title"]);
                 }
                 ?>
 
                 <tr>
-                    <td width="70"><?php echo $item['idx']; ?></td>
-                    <td width="500"><a href=""><?php echo $title; ?></a></td>
-                    <td width="120"><?php echo $item['name'] ?></td>
-                    <td width="100"><?php echo $item['created_at'] ?></td>
-                    <td width="100"><?php echo $item['hit']; ?></td>
-                    <!-- 추천수 표시해주기 위해 추가한 부분 -->
-                    <td width="100"><?php echo $item['thumbsup'] ?></td>
+                    <td><?= $post['idx']; ?></td>
+                    <td>
+                        <a href="<?= $path?>/read.php?idx=<?= $post['idx']?>">
+                            <?= $title; ?>
+                        </a>
+                    </td>
+                    <td><?= $post['name'] ?></td>
+                    <td><?= $post['thumbs_up'] ?></td>
+                    <td><?= $post['thumbs_up'] ?></td>
+                    <td><?= substr($post['created_at'], 0, 10); ?></td>
                 </tr>
                 <?php
             }
         } else {
-            echo "<tr><td colspan='6' align='center'>게시글이 없습니다.</td></tr>";
+            echo "<tr><td colspan='6' class='text-center'>게시글이 없습니다.</td></tr>";
         }
         ?>
         <!-- 추가적인 게시물 아이템들을 여기에 추가 -->

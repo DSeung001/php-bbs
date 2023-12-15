@@ -1,4 +1,5 @@
 <?php
+
 namespace controller;
 
 use model\post;
@@ -24,12 +25,12 @@ class postController
             require_once '../model/post.php';
             $post = new post();
 
-            if ($post->store($name, $pw, $title, $content)){
+            if ($post->store($name, $pw, $title, $content)) {
                 echo "<script>
                     alert('글이 작성되었습니다.');
                     location.href='/bbs/view';
                   </script>";
-            }else{
+            } else {
                 echo "<script>
                    alert('글 작성에 실패했습니다.');
                     history.back();
