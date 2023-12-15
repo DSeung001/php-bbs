@@ -1,13 +1,13 @@
 <?php
-namespace Model;
+namespace model;
 
-class Post
+class post
 {
     private $conn;
 
     public function __construct()
     {
-        $this->conn = require '../DB/Connection.php';
+        $this->conn = require '../db/connection.php';
     }
 
     public function store($name, $pw, $title, $content)

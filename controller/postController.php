@@ -1,16 +1,16 @@
 <?php
-namespace Controller;
+namespace controller;
 
-use Model\Post;
+use model\post;
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
-        $postcontroller = new PostController();
-        $postcontroller->create();
+        $postController = new postController();
+        $postController->create();
         break;
 }
 
-class PostController
+class postController
 {
     public function create()
     {
@@ -21,7 +21,9 @@ class PostController
 
         if (isset($name) && isset($pw) && isset($title) && isset($content)) {
             // 패스워드 암호화
-            $post = new Post();
+            require_once '../model/post.php';
+            $post = new post();
+
             if ($post->store($name, $pw, $title, $content)){
                 echo "<script>
                     alert('글이 작성되었습니다.');

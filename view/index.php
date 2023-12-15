@@ -1,5 +1,5 @@
 <?php
-$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/DB/Connection.php";
+$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
 $path = "/bbs/view"
 ?>
 <!doctype html>
@@ -50,10 +50,10 @@ include "part/header.php";
                     <td width="70"><?php echo $item['idx']; ?></td>
                     <td width="500"><a href=""><?php echo $title; ?></a></td>
                     <td width="120"><?php echo $item['name'] ?></td>
-                    <td width="100"><?php echo $item['date'] ?></td>
+                    <td width="100"><?php echo $item['created_at'] ?></td>
                     <td width="100"><?php echo $item['hit']; ?></td>
                     <!-- 추천수 표시해주기 위해 추가한 부분 -->
-                    <td width="100"><?php echo $item['thumbup'] ?></td>
+                    <td width="100"><?php echo $item['thumbsup'] ?></td>
                 </tr>
                 <?php
             }

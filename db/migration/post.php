@@ -1,7 +1,7 @@
 <?php
-namespace Migration;
+namespace migration;
 
-$conn = require '../Connection.php';
+$conn = require '../connection.php';
 
 try {
     $tableName = "posts";
