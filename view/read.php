@@ -1,6 +1,3 @@
-<?php
-$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
-?>
 <!doctype html>
 <?php
 include "part/header.php";
@@ -8,33 +5,34 @@ include "part/header.php";
 <body>
 
 <?php
+$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
 $post = $conn->query("select * from posts where idx = {$_GET['idx']}")->fetch();
 if ($post){
-?>
+    ?>
 <div class="m-4">
     <div class="container mt-5">
         <h3 class="d-inline"><a href="/bbs/view">자유게시판</a></h3>/<h4 class="d-inline">글 읽기</h4>
         <p class="mt-1 mb-3">글의 상세 내용입니다.</p>
         <hr/>
         <div>
-            <h5 class="d-inline"><b>제목)</b> <?=$post['title']?></h5>
-            <p class="float-right"><b>글쓴이)</b> <?=$post['name']?></p>
+            <h5 class="d-inline"><b>제목)</b> <?= $post['title'] ?></h5>
+            <p class="float-right"><b>글쓴이)</b> <?= $post['name'] ?></p>
         </div>
-        <span class="mr-3">작성일: <?=$post['created_at']?></span>
-        <span class="mr-3">조회수: <?=$post['hit']?></span>
-        <span class="mr-3">추천수: <?=$post['thumbs_up']?></span>
+        <span class="mr-3">작성일: <?= $post['created_at'] ?></span>
+        <span class="mr-3">조회수: <?= $post['hit'] ?></span>
+        <span class="mr-3">추천수: <?= $post['thumbs_up'] ?></span>
         <hr/>
 
         <div class="card mb-3">
             <div class="card-body">
                 <p class="card-text">
-                    <?= $post['content'] ?>
+                    <?= nl2br($post['content']) ?>
                 </p>
             </div>
         </div>
 
-        <button type="button" class="btn btn-primary">수정하기</button>
-        <button type="button" class="btn btn-dark">삭제하기</button>
+        <a href="/bbs/view/modify.php?idx=<?=$post['idx']?>" class="btn btn-primary">수정하기</a>
+        <a href="" class="btn btn-dark">삭제하기</a>
         <a href="#" class="btn btn-secondary">댓글 달기</a>
 
 
