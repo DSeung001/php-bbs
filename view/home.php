@@ -1,22 +1,19 @@
 <?php
-$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
-
+$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/DB/Connection.php";
+$path = "/bbs/view"
 ?>
 <!doctype html>
-<head>
-    <meta charset="UTF-8">
-    <title>게시판</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-          integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-</head>
+<?php
+include "part/header.php";
+?>
 <body>
-<div id="board_area" class="m-4">
-    <h3>자유게시판</h3>
+<div class="m-4">
+    <h3><a href="/bbs/view">자유게시판</a></h3>
 
     <div id="write_btn" class="mb-4">
         <p class="d-inline">자유롭게 글을 쓸 수 있는 게시판입니다.</p>
 
-        <a href="/page/board/write.php">
+        <a href="<?= $path ?>/create.php">
             <button class="btn btn-primary float-right">글쓰기</button>
         </a>
     </div>
@@ -38,7 +35,7 @@ $conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
 
         <?php
         // board테이블에서 idx를 기준으로 내림차순해서 10개까지 표시
-        $list = $conn->query("select * from board order by idx desc limit 0,10")->fetchAll();
+        $list = $conn->query("select * from posts order by idx desc limit 0,10")->fetchAll();
         if ($list) {
             foreach ($list as $item) {
                 //title변수에 DB에서 가져온 title을 선택
@@ -77,8 +74,8 @@ $conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
                 </a>
             </li>
             <li class="page-item"><a class="page-link" href="#">1</a></li>
-<!--            <li class="page-item"><a class="page-link" href="#">2</a></li>-->
-<!--            <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+            <!--            <li class="page-item"><a class="page-link" href="#">2</a></li>-->
+            <!--            <li class="page-item"><a class="page-link" href="#">3</a></li>-->
             <li class="page-item">
                 <a class="page-link" href="#" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>

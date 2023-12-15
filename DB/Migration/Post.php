@@ -1,9 +1,10 @@
 <?php
+namespace Migration;
 
-$conn = require '../connection.php';
+$conn = require '../Connection.php';
 
 try {
-    $tableName = "board";
+    $tableName = "posts";
 
     // 테이블이 존재하는지 확인
     $checkTableExists = $conn->query("SHOW TABLES LIKE '$tableName'")->rowCount() > 0;
@@ -18,7 +19,6 @@ try {
             content TEXT NOT NULL,
             hit INT(6) UNSIGNED DEFAULT 0,
             lock_post INT(1) UNSIGNED DEFAULT 0,
-            boardcol VARCHAR(45),
             thumbsup INT(6) UNSIGNED DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
