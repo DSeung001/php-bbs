@@ -1,7 +1,11 @@
 <?php
 namespace migration;
 
-$conn = require '../connection.php';
+use db\connection;
+
+require_once("../connection.php");
+$conn = new connection();
+$conn = $conn->getConnection();
 
 try {
     $tableName = "posts";

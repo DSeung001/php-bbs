@@ -1,32 +1,46 @@
 <?php
+namespace db;
 
-$root = $_SERVER['DOCUMENT_ROOT'];
+use PDO;
+use PDOException;
 
-// Apache24/htdocs/bbs/config.ini 경로 => 개인 설정 필요
-$config = parse_ini_file($root. '/bbs/config.ini');
-$conn = null;
+class connection
+{
+    private $root;
+    private $conn = null;
+    private $config;
 
-try {
-    // 기본 연결 정보로 접속하여 존재 여부 확인
-    $dsn = "mysql:host={$config['DB_HOSTNAME']};charset=utf8";
-    $conn = new PDO($dsn, $config['DB_USER'], $config['DB_PASSWORD']);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // 데이터베이스가 이미 존재하는지 확인하는 쿼리
-    $result = $conn->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{$config['DB_NAME']}'");
-
-    if ($result->rowCount() == 0) {
-        // 데이터베이스가 존재하지 않으면 생성
-        $conn->exec("CREATE DATABASE {$config['DB_NAME']}");
-        echo "Database {$config['DB_NAME']} created successfully.<br/>";
-    } else {
-        echo "Database {$config['DB_NAME']} already exists.<br/>";
+    public function __construct()
+    {
+        $this->root = $_SERVER['DOCUMENT_ROOT'];
+        $this->config = parse_ini_file($this->root . '/bbs/config.ini');
     }
 
-    $conn->query("use ".$config['DB_NAME']);
+    public function getConnection()
+    {
+        if ($this->conn == null) {
+            try {
+                // 기본 연결 정보로 접속하여 존재 여부 확인
+                $dsn = "mysql:host={$this->config['DB_HOSTNAME']};charset=utf8";
+                $conn = new PDO($dsn, $this->config['DB_USER'], $this->config['DB_PASSWORD']);
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-} catch (PDOException $e) {
-    die("Connection failed: " . $e->getMessage());
+                // 데이터베이스가 이미 존재하는지 확인하는 쿼리
+                $result = $conn->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '{$this->config['DB_NAME']}'");
+
+                if ($result->rowCount() == 0) {
+                    // 데이터베이스가 존재하지 않으면 생성
+                    $conn->exec("CREATE DATABASE {$this->config['DB_NAME']}");
+                    echo "Database {$this->config['DB_NAME']} created successfully.<br/>";
+                }
+
+                $conn->query("use " . $this->config['DB_NAME']);
+
+            } catch (PDOException $e) {
+                die("Connection failed: " . $e->getMessage());
+            }
+            $this->conn = $conn;
+        }
+        return $this->conn;
+    }
 }
-
-return $conn;

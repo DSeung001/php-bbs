@@ -1,5 +1,10 @@
 <?php
-$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
+
+use db\connection;
+
+require_once("../db/connection.php");
+$conn = new connection();
+$conn = $conn->getConnection();
 $path = "/bbs/view"
 ?>
 <!doctype html>

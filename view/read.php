@@ -1,11 +1,16 @@
 <!doctype html>
 <?php
+
+use db\connection;
+
 include "part/header.php";
 ?>
 <body>
 
 <?php
-$conn = require_once $_SERVER['DOCUMENT_ROOT'] . "/bbs/db/connection.php";
+require_once("../db/connection.php");
+$conn = new connection();
+$conn = $conn->getConnection();
 $post = $conn->query("select * from posts where idx = {$_GET['idx']}")->fetch();
 if ($post){
     ?>
@@ -18,9 +23,10 @@ if ($post){
             <h5 class="d-inline"><b>제목)</b> <?= $post['title'] ?></h5>
             <p class="float-right"><b>글쓴이)</b> <?= $post['name'] ?></p>
         </div>
-        <span class="mr-3">작성일: <?= $post['created_at'] ?></span>
-        <span class="mr-3">조회수: <?= $post['hit'] ?></span>
-        <span class="mr-3">추천수: <?= $post['thumbs_up'] ?></span>
+        <span class="mr-2">작성일: <?= $post['created_at'] ?></span>
+        <span class="mr-2">수정일: <?= $post['updated_at'] ?></span>
+        <span class="mr-2">조회수: <?= $post['hit'] ?></span>
+        <span class="mr-2">추천수: <?= $post['thumbs_up'] ?></span>
         <hr/>
 
         <div class="card mb-3">
