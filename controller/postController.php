@@ -22,16 +22,10 @@ function route()
         && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $postController->update();
     } else {
-//        echo "<script>alert('잘못된 접근입니다.');history.back();</script>";
-        echo $protocolHost ."<br/>";
-        echo $_SERVER['REQUEST_METHOD']."<br/>";;
-        echo $_SERVER['HTTP_REFERER']."<br/>";;
+        $postController->redirectBack('잘못된 접근입니다.');
 
     }
 }
-
-
-
 
 class postController
 {
@@ -85,7 +79,7 @@ class postController
         }
     }
 
-    private function redirect($path, $message)
+    public function redirect($path, $message)
     {
         echo "<script>
                 alert('$message');
@@ -94,7 +88,7 @@ class postController
         exit();
     }
 
-    private function redirectBack($message)
+    public function redirectBack($message)
     {
         echo "<script>
                 alert('$message');

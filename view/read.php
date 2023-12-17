@@ -11,7 +11,10 @@ include "part/header.php";
 require_once("../db/connection.php");
 $conn = new connection();
 $conn = $conn->getConnection();
-$post = $conn->query("select * from posts where idx = {$_GET['idx']}")->fetch();
+$stmt = $conn->prepare("select * from posts where idx = :idx");
+$stmt->bindParam('idx', $_GET['idx']);
+$post = $stmt->execute();
+$post = $stmt->fetch();
 if ($post){
     ?>
 <div class="m-4">

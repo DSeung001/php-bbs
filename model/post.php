@@ -39,18 +39,20 @@ class post
     {
         try {
             $query = "SELECT pw FROM posts WHERE idx = :idx";
-            $check = $this->conn->prepare($query);
-            $check->bindParam(':idx', $idx)->fetch();
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx,
+            ]);
+            $check = $stmt->fetch();
 
             // 비밀번호 체크
-            if (!$check || password_verify($pw, $check['pw'])) {
+            if (!$check || !password_verify($pw, $check['pw'])) {
                 return false;
             }
-
             // 업데이트
             $query = "UPDATE posts SET title = :title, content = :content, updated_at = :updated_at WHERE idx = :idx";
-            echo $idx." ".$pw." ".$title." ".$content;
-            return $this->conn->prepare($query)->execute([
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([
                 'title' => $title,
                 'content' => $content,
                 'updated_at' => date('Y-m-d H:i:s'),
