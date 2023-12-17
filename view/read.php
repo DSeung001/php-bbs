@@ -40,10 +40,9 @@ if ($post){
             </div>
         </div>
 
-        <a href="/bbs/view/modify.php?idx=<?=$post['idx']?>" class="btn btn-primary">수정하기</a>
-        <a href="" class="btn btn-dark">삭제하기</a>
+        <a href="/bbs/view/update.php?idx=<?=$post['idx']?>" class="btn btn-primary">수정하기</a>
+        <a href="/bbs/view/delete.php?idx=<?=$post['idx']?>" class="btn btn-dark">삭제하기</a>
         <a href="#" class="btn btn-secondary">댓글 달기</a>
-
 
         <!-- 댓글 섹션 예시 -->
         <div class="mt-4">

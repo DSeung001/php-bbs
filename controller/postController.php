@@ -3,6 +3,7 @@
 namespace controller;
 
 use model\post;
+
 require_once('../model/post.php');
 
 route();
@@ -18,12 +19,15 @@ function route()
         && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $postController->create();
     } else if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/modify.php") !== false
+        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/update.php") !== false
         && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $postController->update();
+    } else if (
+        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/delete.php") !== false
+        && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $postController->delete();
     } else {
         $postController->redirectBack('잘못된 접근입니다.');
-
     }
 }
 
@@ -46,17 +50,16 @@ class postController
         $content = $_POST['content'];
 
         if (isset($name) && isset($pw) && isset($title) && isset($content)) {
-            // 패스워드 암호화
             if ($this->post->store($name, $pw, $title, $content)) {
                 $this->redirect('/bbs/view', '글이 작성되었습니다.');
-            }
-            else {
+            } else {
                 $this->redirectBack('글 작성에 실패했습니다.');
             }
         } else {
             $this->redirectBack('입력되지 않은 값이 있습니다.');
         }
     }
+
     public function update()
     {
         $idx = $_POST['idx'];
@@ -65,14 +68,26 @@ class postController
         $content = $_POST['content'];
 
         if (isset($idx) && isset($pw) && isset($title) && isset($content)) {
-            // 패스워드 암호화
-            require_once '../model/post.php';
-            $this->post = new post();
-
             if ($this->post->update($idx, $pw, $title, $content)) {
                 $this->redirect('/bbs/view', '글이 수정되었습니다.');
             } else {
                 $this->redirectBack('글 수정에 실패했습니다.');
+            }
+        } else {
+            $this->redirectBack('입력되지 않은 값이 있습니다.');
+        }
+    }
+
+    public function delete()
+    {
+        $idx = $_POST['idx'];
+        $pw = $_POST['pw'];
+
+        if (isset($idx) && isset($pw)) {
+            if ($this->post->delete($idx, $pw)) {
+                $this->redirect('/bbs/view', '글이 삭제되었습니다.');
+            } else {
+                $this->redirectBack('글 삭제에 실패했습니다.');
             }
         } else {
             $this->redirectBack('입력되지 않은 값이 있습니다.');

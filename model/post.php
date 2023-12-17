@@ -63,4 +63,29 @@ class post
             return false;
         }
     }
+
+    public function delete ($idx, $pw){
+        try {
+            $query = "SELECT pw FROM posts WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx,
+            ]);
+            $check = $stmt->fetch();
+
+            // 비밀번호 체크
+            if (!$check || !password_verify($pw, $check['pw'])) {
+                return false;
+            }
+            // 삭제
+            $query = "DELETE FROM posts WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([
+                'idx' => $idx,
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }
