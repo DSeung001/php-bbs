@@ -1,13 +1,13 @@
 <!doctype html>
 <?php
 
+require_once("../db/connection.php");
 use db\connection;
 
 include "part/header.php";
 ?>
 <body>
 <?php
-require_once("../db/connection.php");
 $conn = new connection();
 $conn = $conn->getConnection();
 $stmt = $conn->prepare("select * from posts where idx = :idx");

@@ -1,8 +1,7 @@
 <?php
-
+require_once("../db/connection.php");
 use db\connection;
 
-require_once("../db/connection.php");
 $conn = new connection();
 $conn = $conn->getConnection();
 $path = "/bbs/view"

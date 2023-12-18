@@ -22,7 +22,7 @@ try {
             title VARCHAR(100) NOT NULL,
             content TEXT NOT NULL,
             hit INT(6) UNSIGNED DEFAULT 0,
-            lock_post INT(1) UNSIGNED DEFAULT 0,
+            lock INT(1) UNSIGNED DEFAULT 0,
             thumbs_up INT(6) UNSIGNED DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

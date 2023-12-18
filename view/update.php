@@ -1,13 +1,13 @@
 <!doctype html>
 <?php
-
+require_once("../db/connection.php");
 use db\connection;
 
 include "part/header.php";
 ?>
 <body>
 <?php
-require_once("../db/connection.php");
+
 $conn = new connection();
 $conn = $conn->getConnection();
 $stmt = $conn->prepare("select * from posts where idx = :idx");
@@ -31,8 +31,15 @@ if ($post) {
 
                 <div class="form-group mt-3">
                     <label for="title">제목</label>
-                    <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요"
+                    <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력하세요"
                            value="<?= $post['title'] ?>">
+                </div>
+
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="lock" name="lock" <?= $post['lock'] ? 'checked': ''?>>
+                    <label class="form-check-label" for="lock">
+                        비밀 글 여부
+                    </label>
                 </div>
 
                 <div class="form-row">
@@ -43,15 +50,14 @@ if ($post) {
 
                     <div class="form-group col-md-6">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" name="pw" placeholder="Password를 입력해주세요.">
+                        <input type="password" class="form-control" id="password" name="pw" placeholder="Password를 입력해주세요.">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="content">내용</label>
-                    <textarea class="form-control" name="content" rows="5"
-                              placeholder="내용을 입력하세요"><?= $post['content'] ?>
-                    </textarea>
+                    <textarea class="form-control" name="content" rows="5" id="content"
+                              placeholder="내용을 입력하세요"><?= $post['content'] ?></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">저장하기</button>

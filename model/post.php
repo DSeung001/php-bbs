@@ -35,7 +35,7 @@ class post
         }
     }
 
-    public function update($idx, $pw, $title, $content)
+    public function update($idx, $pw, $title, $content, $lock)
     {
         try {
             $query = "SELECT pw FROM posts WHERE idx = :idx";
@@ -50,11 +50,12 @@ class post
                 return false;
             }
             // 업데이트
-            $query = "UPDATE posts SET title = :title, content = :content, updated_at = :updated_at WHERE idx = :idx";
+            $query = "UPDATE posts SET title = :title, content = :content, `lock` = :lock, updated_at = :updated_at WHERE idx = :idx";
             $stmt = $this->conn->prepare($query);
             return $stmt->execute([
                 'title' => $title,
                 'content' => $content,
+                'lock' => $lock == 'on' ? 1 : 0,
                 'updated_at' => date('Y-m-d H:i:s'),
                 'idx' => $idx,
             ]);
@@ -83,6 +84,29 @@ class post
             return $stmt->execute([
                 'idx' => $idx,
             ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    public function lockCheck($idx, $pw)
+    {
+        try {
+            echo $idx;
+            $query = "SELECT pw FROM posts WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx,
+            ]);
+            $check = $stmt->fetch();
+
+            // 비밀번호 체크
+            if (!$check || !password_verify($pw, $check['pw'])) {
+                return false;
+            }
+            setcookie("post_key". $idx, $pw, time() + 3600, "/") ;
+            return true;
         } catch (PDOException $e) {
             error_log($e->getMessage());
             return false;

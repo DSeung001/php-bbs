@@ -25,7 +25,6 @@ include "part/header.php";
                 </div>
             </div>
 
-
             <div class="form-group">
                 <label for="content">내용</label>
                 <textarea class="form-control" name="content" rows="5" placeholder="내용을 입력하세요"></textarea>
