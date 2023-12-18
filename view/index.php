@@ -1,8 +1,8 @@
 <?php
-require_once("../db/connection.php");
-use db\connection;
+require_once "../bootstrap.php";
+use DB\Connection;
 
-$conn = new connection();
+$conn = new Connection();
 $conn = $conn->getConnection();
 $path = "/bbs/view"
 ?>

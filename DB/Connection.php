@@ -1,10 +1,9 @@
 <?php
-namespace db;
-
+namespace DB;
+require_once "../bootstrap.php";
 use PDO;
-use PDOException;
 
-class connection
+class Connection
 {
     private $root;
     private $conn = null;

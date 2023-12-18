@@ -1,21 +1,15 @@
 <?php
+namespace Model;
 
-namespace model;
+require_once "../bootstrap.php";
 
-require_once("../db/connection.php");
-
-use db\connection;
-use PDO;
 use PDOException;
 
-class post
+class Post extends BaseModel
 {
-    private $conn;
-
     public function __construct()
     {
-        $this->conn = new connection();
-        $this->conn = $this->conn->getConnection();
+        parent::__construct();
     }
 
     public function store($name, $pw, $title, $content)
@@ -50,13 +44,12 @@ class post
                 return false;
             }
             // 업데이트
-            $query = "UPDATE posts SET title = :title, content = :content, `lock` = :lock, updated_at = :updated_at WHERE idx = :idx";
+            $query = "UPDATE posts SET title = :title, content = :content, `lock` = :lock WHERE idx = :idx";
             $stmt = $this->conn->prepare($query);
             return $stmt->execute([
                 'title' => $title,
                 'content' => $content,
                 'lock' => $lock == 'on' ? 1 : 0,
-                'updated_at' => date('Y-m-d H:i:s'),
                 'idx' => $idx,
             ]);
         } catch (PDOException $e) {

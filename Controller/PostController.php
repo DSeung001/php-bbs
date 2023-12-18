@@ -1,41 +1,9 @@
 <?php
+namespace Controller;
+require_once "../bootstrap.php";
+use Model\Post;
 
-namespace controller;
-
-use model\post;
-
-require_once('../model/post.php');
-
-route();
-function route()
-{
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'];
-    $protocolHost = $protocol . '://' . $host;
-    $postController = new postController();
-
-    // 글 작성 핸들링
-    if ($_SERVER['HTTP_REFERER'] == $protocolHost . "/bbs/view/create.php"
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $postController->create();
-    } else if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/update.php") !== false
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $postController->update();
-    } else if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/delete.php") !== false
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $postController->delete();
-    } else if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/read.php") !== false
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $postController->lockCheck();
-    } else {
-        $postController->redirectBack('잘못된 접근입니다.');
-    }
-}
-
-class postController
+class PostController extends BaseController
 {
     // php 클래스의 속성 값으로 기본 값을 할 수 없음
     private $post;
@@ -114,22 +82,33 @@ class postController
             $this->redirectBack('입력되지 않은 값이 있습니다.');
         }
     }
+}
 
-    public function redirect($path, $message)
-    {
-        echo "<script>
-                alert('$message');
-                location.href='$path';
-              </script>";
-        exit();
-    }
+route();
+function route()
+{
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'];
+    $protocolHost = $protocol . '://' . $host;
+    $PostController = new PostController();
 
-    public function redirectBack($message)
-    {
-        echo "<script>
-                alert('$message');
-                history.back();
-              </script>";
-        exit();
+    // 글 작성 핸들링
+    if ($_SERVER['HTTP_REFERER'] == $protocolHost . "/bbs/view/create.php"
+        && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $PostController->create();
+    } else if (
+        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/update.php") !== false
+        && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $PostController->update();
+    } else if (
+        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/delete.php") !== false
+        && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $PostController->delete();
+    } else if (
+        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/read.php") !== false
+        && $_SERVER['REQUEST_METHOD'] == 'POST') {
+        $PostController->lockCheck();
+    } else {
+        $PostController->redirectBack('잘못된 접근입니다.');
     }
 }

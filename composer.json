@@ -1,0 +1,18 @@
+{
+    "name": "seung/bbs",
+    "autoload": {
+        "psr-4": {
+            "Controller\\" : "Controller/",
+            "Model\\" : "Model/",
+            "Migration\\": "DB/Migration/",
+            "DB\\" : "DB/"
+        }
+    },
+    "authors": [
+        {
+            "name": "seungryeol",
+            "email": "seungryeol156@gmail.com"
+        }
+    ],
+    "require": {}
+}

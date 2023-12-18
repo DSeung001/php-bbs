@@ -1,8 +1,7 @@
 <!doctype html>
 <?php
-require_once("../db/connection.php");
-
-use db\connection;
+require_once "../bootstrap.php";
+use DB\Connection;
 
 include "part/header.php";
 ?>
@@ -29,7 +28,7 @@ include "part/header.php";
             }
             if ($post['lock'] == 1 && !$pass) {
                 ?>
-                <form action="../controller/postController.php" method="post">
+                <form action="../Controller/PostController.php" method="post">
                     <p>비밀글입니다, 보기 위해서는 비밀번호가 필요합니다.</p>
                     <div class="form-group">
                         <input type="hidden" name="idx" value="<?= $_GET['idx'] ?>">
@@ -37,6 +36,7 @@ include "part/header.php";
                         <input id="pw" type="text" class="form-control" name="pw" placeholder="비밀번호를 입력하세요">
                     </div>
                     <button type="submit" class="btn btn-primary">확인하기</button>
+                    <a href="/bbs/view" class="btn btn-secondary">목록</a>
                 </form>
                 <?php
             } else {
@@ -63,12 +63,21 @@ include "part/header.php";
                 <a href="/bbs/view/delete.php?idx=<?= $post['idx'] ?>" class="btn btn-dark">삭제하기</a>
                 <a href="#" class="btn btn-secondary">댓글 달기</a>
 
+                <div class="mt-2">
+                    <form>
+                        <div class="form-group">
+                            <label for="comment">댓글 작성:</label>
+                            <textarea class="form-control" id="comment" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">댓글 작성</button>
+                    </form>
+                </div>
+                <hr/>
+
                 <!-- 댓글 섹션 예시 -->
                 <div class="mt-4">
                     <h3>댓글</h3>
                     <div class="media mt-3">
-                        <!--https://placehold.co/로 이미지 가져오기-->
-                        <img src="https://via.placeholder.com/64" class="mr-3 rounded-circle" alt="유저 이미지">
                         <div class="media-body">
                             <h5 class="mt-0">댓글 작성자</h5>
                             댓글 내용이 여기에 들어갑니다.
