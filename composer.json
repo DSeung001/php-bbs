@@ -5,7 +5,8 @@
             "Controller\\" : "Controller/",
             "Model\\" : "Model/",
             "Migration\\": "DB/Migration/",
-            "DB\\" : "DB/"
+            "DB\\" : "DB/",
+            "Utils\\" : "Utils/"
         }
     },
     "authors": [

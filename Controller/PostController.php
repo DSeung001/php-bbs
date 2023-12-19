@@ -2,6 +2,8 @@
 namespace Controller;
 require_once "../bootstrap.php";
 use Model\Post;
+use Utils\RouteUtils;
+
 class PostController extends BaseController
 {
     // php 클래스의 속성 값으로 기본 값을 할 수 없음
@@ -83,31 +85,30 @@ class PostController extends BaseController
     }
 }
 
-function postRoute()
+class PostRoute
 {
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'];
-    $protocolHost = $protocol . '://' . $host;
-    $PostController = new PostController();
+    use RouteUtils;
 
-    // 글 작성 핸들링
-    if ($_SERVER['HTTP_REFERER'] == $protocolHost . "/bbs/view/create.php"
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $PostController->create();
-    } else if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/update.php") !== false
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $PostController->update();
-    } else if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/delete.php") !== false
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $PostController->delete();
-    } else if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/read.php") !== false
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $PostController->lockCheck();
-    } else {
-        $PostController->redirectBack('잘못된 접근입니다.');
+    function routing()
+    {
+        $PostController = new PostController();
+
+        // 글 작성 핸들링
+        if ($this->routeCheck("/bbs/view/create.php", "POST")) {
+            $PostController->create();
+        } else if (
+            $this->routeCheck("/bbs/view/update.php", "POST")) {
+            $PostController->update();
+        } else if (
+            $this->routeCheck("/bbs/view/delete.php", "POST")) {
+            $PostController->delete();
+        } else if (
+            $this->routeCheck("/bbs/view/read.php", "POST")) {
+            $PostController->lockCheck();
+        } else {
+            $PostController->redirectBack('잘못된 접근입니다.');
+        }
     }
 }
-postRoute();
+$route = new PostRoute();
+$route->routing();

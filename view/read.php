@@ -13,10 +13,11 @@ include "part/header.php";
         <p class="mt-1 mb-3">글의 상세 내용입니다.</p>
         <hr/>
         <?php
+        $idx = $_GET['idx'];
         $conn = new connection();
         $conn = $conn->getConnection();
         $stmt = $conn->prepare("select * from posts where idx = :idx");
-        $stmt->bindParam('idx', $_GET['idx']);
+        $stmt->bindParam('idx', $idx);
         $post = $stmt->execute();
         $post = $stmt->fetch();
 
@@ -32,7 +33,7 @@ include "part/header.php";
                 <form action="../Controller/PostController.php" method="post">
                     <p>비밀글입니다, 보기 위해서는 비밀번호가 필요합니다.</p>
                     <div class="form-group">
-                        <input type="hidden" name="idx" value="<?= $_GET['idx'] ?>">
+                        <input type="hidden" name="idx" value="<?= $idx ?>">
                         <label for="pw">Password</label>
                         <input id="pw" type="text" class="form-control" name="pw" placeholder="비밀번호를 입력하세요">
                     </div>
@@ -41,14 +42,22 @@ include "part/header.php";
                 </form>
                 <?php
             } else {
+                $hitBonus = 0;
+                if (!isset($_COOKIE['post_hit' . $idx])) {
+                    $stmt = $conn->prepare("update posts set hit = hit + 1 where idx = :idx");
+                    $stmt->bindParam('idx', $idx);
+                    $stmt->execute();
+                    setcookie('post_hit' . $post['idx'], true, time() + 60 * 60 * 24, '/');
+                    $hitBonus = 1;
+                }
                 ?>
                 <div>
-                    <h5 class="d-inline"><b>제목)</b> <?= $post['title'] ?></h5>
-                    <p class="float-right"><b>글쓴이)</b> <?= $post['name'] ?></p>
+                    <h5 class="d-inline">제목) <?= $post['title'] ?></h5>
+                    <p class="float-right">글쓴이) <?= $post['name'] ?></p>
                 </div>
                 <span class="mr-2">작성일: <?= $post['created_at'] ?></span>
                 <span class="mr-2">수정일: <?= $post['updated_at'] ?></span>
-                <span class="mr-2">조회수: <?= $post['hit'] ?></span>
+                <span class="mr-2">조회수: <?= $post['hit'] + $hitBonus ?></span>
                 <span class="mr-2">추천수: <?= $post['thumbs_up'] ?></span>
                 <hr/>
 
@@ -62,14 +71,17 @@ include "part/header.php";
 
                 <a href="/bbs/view/update.php?idx=<?= $post['idx'] ?>" class="btn btn-primary">수정하기</a>
                 <a href="/bbs/view/delete.php?idx=<?= $post['idx'] ?>" class="btn btn-dark">삭제하기</a>
-                <a href="#" class="btn btn-secondary">댓글 달기</a>
+                <button class="btn btn-success" id="thumbs_up">
+                    추천
+                    <span class="material-symbols-outlined" style="font-size:16px">thumb_up</span>
+                </button>
 
                 <div class="mt-2">
                     <hr/>
                     <h5>댓글 작성</h5>
                     <form action="../Controller/ReplyController.php" method="post">
                         <div class="form-group">
-                            <input type="hidden" name="post_idx" value="<?= $_GET['idx'] ?>">
+                            <input type="hidden" name="post_idx" value="<?= $idx ?>">
                             <div class="form-row">
                                 <div class="form-group col-md-6">
                                     <label for="name">Name</label>
@@ -91,7 +103,7 @@ include "part/header.php";
                 <hr/>
                 <h3>댓글</h3>
                 <?php
-                $replies = $conn->query("select * from replies where post_idx = " . $_GET['idx'] . " order by idx")->fetchAll();
+                $replies = $conn->query("select * from replies where post_idx = " . $idx . " order by idx")->fetchAll();
                 if ($replies) {
                     foreach ($replies as $reply) {
                         ?>
@@ -118,5 +130,27 @@ include "part/header.php";
         ?>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $("#thumbs_up").click(function () {
+            $.ajax({
+                url: "../Controller/PostController.php",
+                type: "post",
+                data: {
+                    idx: <?= $idx ?>,
+                    thumbs_up: true
+                },
+                success: function (data) {
+                    if (data == "success") {
+                        alert("추천하였습니다.");
+                        location.reload();
+                    } else {
+                        alert("추천에 실패하였습니다.");
+                    }
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

@@ -59,7 +59,7 @@ include "part/header.php";
                     </td>
                     <td><?= $post['name'] ?></td>
                     <td><?= $post['thumbs_up'] ?></td>
-                    <td><?= $post['thumbs_up'] ?></td>
+                    <td><?= $post['hit'] ?></td>
                     <td><?= $post['created_at'] ?></td>
                 </tr>
                 <?php

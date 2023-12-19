@@ -4,9 +4,11 @@ namespace Controller;
 require_once "../bootstrap.php";
 
 use Model\Reply;
+use Utils\RouteUtils;
 
 class ReplyController extends BaseController
 {
+    use routeUtils;
     private $reply;
 
     public function __construct()
@@ -33,20 +35,19 @@ class ReplyController extends BaseController
     }
 }
 
-function replyRoute()
-{
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'];
-    $protocolHost = $protocol . '://' . $host;
-    $ReplyController = new ReplyController();
+class ReplyRoute{
+    use RouteUtils;
 
-    if (
-        strpos($_SERVER['HTTP_REFERER'], $protocolHost . "/bbs/view/read.php") !== false
-        && $_SERVER['REQUEST_METHOD'] == 'POST') {
-        $ReplyController->create();
-    } else {
-        $ReplyController->redirectBack('잘못된 접근입니다.');
+    function routing(){
+        $ReplyController = new ReplyController();
+
+        if ($this->routeCheck("/bbs/view/read.php","POST")) {
+            $ReplyController->create();
+        } else {
+            $ReplyController->redirectBack('잘못된 접근입니다.');
+        }
     }
 }
 
-replyRoute();
+$route = new ReplyRoute();
+$route->routing();
