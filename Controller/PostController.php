@@ -2,7 +2,6 @@
 namespace Controller;
 require_once "../bootstrap.php";
 use Model\Post;
-
 class PostController extends BaseController
 {
     // php 클래스의 속성 값으로 기본 값을 할 수 없음
@@ -84,8 +83,7 @@ class PostController extends BaseController
     }
 }
 
-route();
-function route()
+function postRoute()
 {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'];
@@ -112,3 +110,4 @@ function route()
         $PostController->redirectBack('잘못된 접근입니다.');
     }
 }
+postRoute();

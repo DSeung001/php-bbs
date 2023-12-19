@@ -1,6 +1,7 @@
 <!doctype html>
 <?php
 require_once "../bootstrap.php";
+
 use DB\Connection;
 
 include "part/header.php";
@@ -64,27 +65,52 @@ include "part/header.php";
                 <a href="#" class="btn btn-secondary">댓글 달기</a>
 
                 <div class="mt-2">
-                    <form>
+                    <hr/>
+                    <h5>댓글 작성</h5>
+                    <form action="../Controller/ReplyController.php" method="post">
                         <div class="form-group">
-                            <label for="comment">댓글 작성:</label>
-                            <textarea class="form-control" id="comment" rows="3"></textarea>
+                            <input type="hidden" name="post_idx" value="<?= $_GET['idx'] ?>">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" name="name" placeholder="Name을 입력해주세요.">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" name="pw"
+                                           placeholder="Password를 입력해주세요.">
+                                </div>
+                            </div>
+
+                            <label for="content">내용:</label>
+                            <textarea name="content" class="form-control" id="content" rows="3"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">댓글 작성</button>
                     </form>
                 </div>
                 <hr/>
-
-                <!-- 댓글 섹션 예시 -->
-                <div class="mt-4">
-                    <h3>댓글</h3>
-                    <div class="media mt-3">
-                        <div class="media-body">
-                            <h5 class="mt-0">댓글 작성자</h5>
-                            댓글 내용이 여기에 들어갑니다.
-                        </div>
-                    </div>
-                </div>
+                <h3>댓글</h3>
                 <?php
+                $replies = $conn->query("select * from replies where post_idx = " . $_GET['idx'] . " order by idx")->fetchAll();
+                if ($replies) {
+                    foreach ($replies as $reply) {
+                        ?>
+
+                        <!-- 댓글 섹션 예시 -->
+                        <div class="mt-4 card">
+                            <div class="card-body">
+                                <div class="media-body mb-3">
+                                    <h5 class="mt-0"><?= $reply['name'] ?></h5>
+                                    <p class="mb-0">작성일: <?= $reply['created_at'] ?></p>
+                                    <?= nl2br($reply['content']) ?>
+                                </div>
+                                <a class="btn btn-primary" href="">수정</a>
+                                <a class="btn btn-primary" href="">삭제</a>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
             }
         } else {
             echo "<script>alert('존재하지 않는 게시물입니다.');history.back();</script>";

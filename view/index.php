@@ -39,9 +39,9 @@ include "part/header.php";
 
         <?php
         // board테이블에서 idx를 기준으로 내림차순해서 10개까지 표시
-        $list = $conn->query("select * from posts order by idx desc limit 0,10")->fetchAll();
-        if ($list) {
-            foreach ($list as $post) {
+        $posts = $conn->query("select * from posts order by idx desc limit 0,10")->fetchAll();
+        if ($posts) {
+            foreach ($posts as $post) {
                 //title변수에 DB에서 가져온 title을 선택
                 $title = $post["title"];
                 if (strlen($title) > 30) {
@@ -60,7 +60,7 @@ include "part/header.php";
                     <td><?= $post['name'] ?></td>
                     <td><?= $post['thumbs_up'] ?></td>
                     <td><?= $post['thumbs_up'] ?></td>
-                    <td><?= substr($post['created_at'], 0, 10); ?></td>
+                    <td><?= $post['created_at'] ?></td>
                 </tr>
                 <?php
             }
