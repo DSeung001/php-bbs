@@ -30,7 +30,7 @@ include "part/header.php";
             }
             if ($post['lock'] == 1 && !$pass) {
                 ?>
-                <form action="../Controller/PostController.php" method="post">
+                <form action="/bbs/post/lockCheck" method="post">
                     <p>비밀글입니다, 보기 위해서는 비밀번호가 필요합니다.</p>
                     <div class="form-group">
                         <input type="hidden" name="idx" value="<?= $idx ?>">
@@ -79,7 +79,7 @@ include "part/header.php";
                 <div class="mt-2">
                     <hr/>
                     <h5>댓글 작성</h5>
-                    <form action="../Controller/ReplyController.php" method="post">
+                    <form action="/bbs/reply/create" method="post">
                         <div class="form-group">
                             <input type="hidden" name="post_idx" value="<?= $idx ?>">
                             <div class="form-row">

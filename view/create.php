@@ -9,7 +9,7 @@ include "part/header.php";
         <h3 class="d-inline"><a href="/bbs/view">자유게시판</a></h3>/<h4 class="d-inline">글 작성</h4>
         <p class="mt-1">글을 작성하는 공간입니다.</p>
 
-        <form action="../Controller/PostController.php" method="post">
+        <form action="/bbs/post/create" method="post">
             <div class="form-group">
                 <label for="title">제목</label>
                 <input type="text" class="form-control" name="title" placeholder="제목을 입력하세요">

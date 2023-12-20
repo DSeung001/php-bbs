@@ -1,7 +1,7 @@
 <?php
 namespace Controller;
 
-class BaseController{
+class Controller{
     public function redirect($path, $message)
     {
         echo "<script>

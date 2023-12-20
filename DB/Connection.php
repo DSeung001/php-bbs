@@ -1,6 +1,5 @@
 <?php
 namespace DB;
-require_once "../bootstrap.php";
 use PDO;
 
 class Connection

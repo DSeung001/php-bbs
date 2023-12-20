@@ -1,8 +1,6 @@
 <?php
 namespace Model;
 
-require_once "../bootstrap.php";
-
 use PDOException;
 
 class Post extends BaseModel

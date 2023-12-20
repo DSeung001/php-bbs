@@ -6,7 +6,9 @@
             "Model\\" : "Model/",
             "Migration\\": "DB/Migration/",
             "DB\\" : "DB/",
-            "Utils\\" : "Utils/"
+            "Utils\\" : "Utils/",
+            "Route\\" : "Route/",
+            "Utils\\": "Utils/"
         }
     },
     "authors": [

@@ -20,7 +20,7 @@ if ($post) {
             <h3 class="d-inline"><a href="/bbs/view">자유게시판</a></h3>/<h4 class="d-inline">글 삭제</h4>
             <p class="mt-1">글을 삭제하는 공간입니다.</p>
 
-            <form action="../Controller/PostController.php" method="post">
+            <form action="/bbs/post/delete" method="post">
                 <span class="mr-2">작성일: <?= $post['created_at'] ?></span>
                 <span class="mr-2">수정일: <?= $post['updated_at'] ?></span>
                 <span class="mr-2">조회수: <?= $post['hit'] ?></span>

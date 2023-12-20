@@ -1,12 +1,10 @@
 <?php
-
 namespace Controller;
-require_once "../bootstrap.php";
 
 use Model\Reply;
 use Utils\RouteUtils;
 
-class ReplyController extends BaseController
+class ReplyController extends Controller
 {
     use routeUtils;
     private $reply;
@@ -34,20 +32,3 @@ class ReplyController extends BaseController
         }
     }
 }
-
-class ReplyRoute{
-    use RouteUtils;
-
-    function routing(){
-        $ReplyController = new ReplyController();
-
-        if ($this->routeCheck("/bbs/view/read.php","POST")) {
-            $ReplyController->create();
-        } else {
-            $ReplyController->redirectBack('잘못된 접근입니다.');
-        }
-    }
-}
-
-$route = new ReplyRoute();
-$route->routing();

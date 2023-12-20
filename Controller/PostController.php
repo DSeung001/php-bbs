@@ -1,10 +1,9 @@
 <?php
 namespace Controller;
-require_once "../bootstrap.php";
-use Model\Post;
-use Utils\RouteUtils;
 
-class PostController extends BaseController
+use Model\Post;
+
+class PostController extends Controller
 {
     // php 클래스의 속성 값으로 기본 값을 할 수 없음
     private $post;
@@ -84,31 +83,3 @@ class PostController extends BaseController
         }
     }
 }
-
-class PostRoute
-{
-    use RouteUtils;
-
-    function routing()
-    {
-        $PostController = new PostController();
-
-        // 글 작성 핸들링
-        if ($this->routeCheck("/bbs/view/create.php", "POST")) {
-            $PostController->create();
-        } else if (
-            $this->routeCheck("/bbs/view/update.php", "POST")) {
-            $PostController->update();
-        } else if (
-            $this->routeCheck("/bbs/view/delete.php", "POST")) {
-            $PostController->delete();
-        } else if (
-            $this->routeCheck("/bbs/view/read.php", "POST")) {
-            $PostController->lockCheck();
-        } else {
-            $PostController->redirectBack('잘못된 접근입니다.');
-        }
-    }
-}
-$route = new PostRoute();
-$route->routing();
