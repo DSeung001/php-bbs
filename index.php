@@ -9,7 +9,6 @@ use Route\ReplyRoute;
 $url = isset($_GET['url']) ? $_GET['url'] : '/';
 
 if ($url == '/' || $url == '') {
-    echo "실행";
     header('Location: post/list');
 } else {
 
