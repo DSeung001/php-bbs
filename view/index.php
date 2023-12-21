@@ -1,10 +1,8 @@
 <?php
-require_once "../bootstrap.php";
 use DB\Connection;
 
 $conn = new Connection();
 $conn = $conn->getConnection();
-$path = "/bbs/view"
 ?>
 <!doctype html>
 <?php
@@ -12,12 +10,12 @@ include "part/header.php";
 ?>
 <body>
 <div class="m-4">
-    <h3><a href="/bbs/view">자유게시판</a></h3>
+    <h3><a href="/bbs">자유게시판</a></h3>
 
     <div id="write_btn" class="mb-4">
         <p class="d-inline">자유롭게 글을 쓸 수 있는 게시판입니다.</p>
 
-        <a href="<?= $path ?>/create.php">
+        <a href="./create">
             <button class="btn btn-primary float-right">글쓰기</button>
         </a>
     </div>
@@ -53,7 +51,7 @@ include "part/header.php";
                 <tr>
                     <td><?= $post['idx']; ?></td>
                     <td>
-                        <a href="<?= $path?>/read.php?idx=<?= $post['idx']?>">
+                        <a href="./read?idx=<?= $post['idx']?>">
                             <?= $title; ?>
                         </a>
                     </td>

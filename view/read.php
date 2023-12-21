@@ -1,7 +1,5 @@
 <!doctype html>
 <?php
-require_once "../bootstrap.php";
-
 use DB\Connection;
 
 include "part/header.php";
@@ -9,7 +7,7 @@ include "part/header.php";
 <body>
 <div class="m-4">
     <div class="container mt-5">
-        <h3 class="d-inline"><a href="/bbs/view">자유게시판</a></h3>/<h4 class="d-inline">글 읽기</h4>
+        <h3 class="d-inline"><a href="/bbs">자유게시판</a></h3>/<h4 class="d-inline">글 읽기</h4>
         <p class="mt-1 mb-3">글의 상세 내용입니다.</p>
         <hr/>
         <?php
@@ -38,7 +36,7 @@ include "part/header.php";
                         <input id="pw" type="text" class="form-control" name="pw" placeholder="비밀번호를 입력하세요">
                     </div>
                     <button type="submit" class="btn btn-primary">확인하기</button>
-                    <a href="/bbs/view" class="btn btn-secondary">목록</a>
+                    <a href="/bbs" class="btn btn-secondary">목록</a>
                 </form>
                 <?php
             } else {
@@ -69,8 +67,8 @@ include "part/header.php";
                     </div>
                 </div>
 
-                <a href="/bbs/view/update.php?idx=<?= $post['idx'] ?>" class="btn btn-primary">수정하기</a>
-                <a href="/bbs/view/delete.php?idx=<?= $post['idx'] ?>" class="btn btn-dark">삭제하기</a>
+                <a href="./update?idx=<?= $post['idx'] ?>" class="btn btn-primary">수정하기</a>
+                <a href="./delete?idx=<?= $post['idx'] ?>" class="btn btn-dark">삭제하기</a>
                 <button class="btn btn-success" id="thumbs_up">
                     추천
                     <span class="material-symbols-outlined" style="font-size:16px">thumb_up</span>

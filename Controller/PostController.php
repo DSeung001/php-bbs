@@ -23,7 +23,7 @@ class PostController extends Controller
 
         if (isset($name) && isset($pw) && isset($title) && isset($content)) {
             if ($this->post->store($name, $pw, $title, $content)) {
-                $this->redirect('/bbs/view', '글이 작성되었습니다.');
+                $this->redirect('/bbs', '글이 작성되었습니다.');
             } else {
                 $this->redirectBack('글 작성에 실패했습니다.');
             }
@@ -42,7 +42,7 @@ class PostController extends Controller
 
         if (isset($idx) && isset($pw) && isset($title) && isset($content) && isset($lock)) {
             if ($this->post->update($idx, $pw, $title, $content, $lock)) {
-                $this->redirect('/bbs/view', '글이 수정되었습니다.');
+                $this->redirect('/bbs', '글이 수정되었습니다.');
             } else {
                 $this->redirectBack('글 수정에 실패했습니다.');
             }
@@ -58,7 +58,7 @@ class PostController extends Controller
 
         if (isset($idx) && isset($pw)) {
             if ($this->post->delete($idx, $pw)) {
-                $this->redirect('/bbs/view', '글이 삭제되었습니다.');
+                $this->redirect('/bbs', '글이 삭제되었습니다.');
             } else {
                 $this->redirectBack('글 삭제에 실패했습니다.');
             }
@@ -74,7 +74,7 @@ class PostController extends Controller
 
         if (isset($pw)) {
             if ($this->post->lockCheck($idx, $pw)) {
-                $this->redirect('/bbs/view/read.php?idx=' . $idx, '비밀번호가 일치합니다.');
+                $this->redirect('/bbs/post/read?idx=' . $idx, '비밀번호가 일치합니다.');
             } else {
                 $this->redirectBack('비밀번호가 일치하지 않습니다.');
             }

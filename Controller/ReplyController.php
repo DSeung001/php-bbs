@@ -23,7 +23,7 @@ class ReplyController extends Controller
 
         if (isset($postIdx) && isset($name) && isset($pw) && isset($content)) {
             if ($this->reply->store($postIdx, $name, $pw, $content)) {
-                $this->redirect('/bbs/view/read.php?idx=' . $postIdx, '댓글이 작성되었습니다.');
+                $this->redirect('/bbs/post/read?idx=' . $postIdx, '댓글이 작성되었습니다.');
             } else {
                 $this->redirectBack('댓글 작성에 실패했습니다.');
             }

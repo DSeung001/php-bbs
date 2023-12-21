@@ -1,12 +1,11 @@
 <!doctype html>
 <?php
-require_once "../bootstrap.php";
 include "part/header.php";
 ?>
 <body>
 <div class="m-4">
     <div class="container mt-5">
-        <h3 class="d-inline"><a href="/bbs/view">자유게시판</a></h3>/<h4 class="d-inline">글 작성</h4>
+        <h3 class="d-inline"><a href="/bbs">자유게시판</a></h3>/<h4 class="d-inline">글 작성</h4>
         <p class="mt-1">글을 작성하는 공간입니다.</p>
 
         <form action="/bbs/post/create" method="post">

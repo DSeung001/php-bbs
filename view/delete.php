@@ -1,6 +1,5 @@
 <!doctype html>
 <?php
-require_once "../bootstrap.php";
 use DB\Connection;
 
 include "part/header.php";
@@ -17,7 +16,7 @@ if ($post) {
     ?>
     <div class="m-4">
         <div class="container mt-5">
-            <h3 class="d-inline"><a href="/bbs/view">자유게시판</a></h3>/<h4 class="d-inline">글 삭제</h4>
+            <h3 class="d-inline"><a href="/bbs">자유게시판</a></h3>/<h4 class="d-inline">글 삭제</h4>
             <p class="mt-1">글을 삭제하는 공간입니다.</p>
 
             <form action="/bbs/post/delete" method="post">
@@ -46,8 +45,8 @@ if ($post) {
                 </div>
 
                 <button type="submit" class="btn btn-primary">삭제</button>
-                <a href="/bbs/view" class="btn btn-secondary">목록</a>
-                <a href="/bbs/view/read.php?idx=<?= $post['idx'] ?>" class="btn btn-secondary">뒤로가기</a>
+                <a href="/bbs" class="btn btn-secondary">목록</a>
+                <a href="./read?idx=<?= $post['idx'] ?>" class="btn btn-secondary">뒤로가기</a>
             </form>
         </div>
     </div>

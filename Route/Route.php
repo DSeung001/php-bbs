@@ -1,11 +1,14 @@
 <?php
+
 namespace Route;
 
 use Controller\Controller;
 use Utils\RouteUtils;
 
-abstract class Route {
+abstract class Route
+{
     use RouteUtils;
+
     private $controller;
 
     public function __construct(Controller $controller)
@@ -13,5 +16,5 @@ abstract class Route {
         $this->controller = $controller;
     }
 
-    abstract function routing($url);
+    abstract function routing($url): bool;
 }
