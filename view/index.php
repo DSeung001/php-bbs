@@ -40,19 +40,21 @@ include "part/header.php";
         $posts = $conn->query("select * from posts order by idx desc limit 0,10")->fetchAll();
         if ($posts) {
             foreach ($posts as $post) {
-                //title변수에 DB에서 가져온 title을 선택
+            
+                /// 30 글자 초과시 ... 저리
                 $title = $post["title"];
                 if (strlen($title) > 30) {
-                    //title이 30을 넘어서면 ...표시
                     $title = str_replace($post["title"], mb_substr($post["title"], 0, 30, "utf-8") . "...", $post["title"]);
                 }
+
+                $replyCount = $conn->query("select count(*) from replies where post_idx = $post[idx]")->fetchColumn();
                 ?>
 
                 <tr>
                     <td><?= $post['idx']; ?></td>
                     <td>
                         <a href="./read?idx=<?= $post['idx']?>">
-                            <?= $title; ?>
+                            <?= $title." [".$replyCount."]"; ?>
                         </a>
                     </td>
                     <td><?= $post['name'] ?></td>
@@ -88,7 +90,6 @@ include "part/header.php";
             </li>
         </ul>
     </nav>
-
 </div>
 </body>
 </html>

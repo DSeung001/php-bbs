@@ -69,9 +69,10 @@ include "part/header.php";
                 </div>
 
                 <a href="./update?idx=<?= $post['idx'] ?>" class="btn btn-primary">수정하기</a>
+                <a href="/bbs" class="btn btn-secondary">목록</a>
                 <a href="./delete?idx=<?= $post['idx'] ?>" class="btn btn-dark">삭제하기</a>
-                <button class="btn btn-success" id="thumbs_up">
-                    추천 <?= $post['thumbs_up'] != 0 ? "(".$post['thumbs_up'].")" : ''?>
+                <button class="btn btn-success" id="thumbsUp">
+                    추천 <?= $post['thumbs_up'] != 0 ? "(" . $post['thumbs_up'] . ")" : '' ?>
                     <span class="material-symbols-outlined" style="font-size:16px">thumb_up</span>
                 </button>
 
@@ -115,12 +116,53 @@ include "part/header.php";
                                     <p class="mb-0">작성일: <?= $reply['created_at'] ?></p>
                                     <?= nl2br($reply['content']) ?>
                                 </div>
-                                <a class="btn btn-primary" href="">수정</a>
-                                <a class="btn btn-primary" href="">삭제</a>
+                                <button class="btn btn-primary btn-reply-edit" data-bs-toggle="modal" data-bs-target="#editModal">수정
+                                </button>
+                                <button class="btn btn-primary">댓글</button>
+                                <button class="btn btn-primary">삭제</button>
                             </div>
                         </div>
                         <?php
                     }
+                    ?>
+                    <!-- 모달 -->
+                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">댓글 수정</h5>
+                                    <button style="height: 35px;" type="button" class="btn-close btn btn-primary p-1"
+                                            data-bs-dismiss="modal" aria-label="Close">
+                                        <span style="width: 23px; height: 23px"
+                                              class="material-symbols-outlined">close</span>
+                                    </button>
+                                </div>
+                                <form>
+                                    <input type="hidden" name="replyIdx">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="modalName" class="form-label">제목:</label>
+                                            <input type="text" class="form-control" id="modalName">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="modalPw" class="form-label">Password:</label>
+                                            <input type="text" class="form-control" id="modalPw">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="modalContent" class="form-label">내용:</label>
+                                            <textarea name="content" class="form-control" id="modalContent"
+                                                      rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
                 }
             }
         } else {
@@ -131,7 +173,7 @@ include "part/header.php";
 </div>
 <script>
     $(document).ready(function () {
-        $("#thumbs_up").click(function () {
+        $("#thumbsUp").click(function () {
             $.ajax({
                 url: "/bbs/post/thumbsUp",
                 type: "POST",
@@ -151,6 +193,28 @@ include "part/header.php";
                 }
             });
         });
+
+        $(".btn-reply-edit").click(function (){
+            $.ajax({
+                url: "/bbs/reply/read",
+                type: "GET",
+                data: {
+                    reply_idx: 1
+                },
+                success: function (data) {
+                    if (data.result) {
+                        console.log(data.data);
+                        $("#modalName").val(data.data.name);
+                        $("#modalContent").val(data.data.content);
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function (e) {
+                    alert("에러 발생");
+                }
+            })
+        })
     });
 </script>
 </body>

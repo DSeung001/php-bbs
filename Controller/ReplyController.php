@@ -2,11 +2,9 @@
 namespace Controller;
 
 use Model\Reply;
-use Utils\RouteUtils;
 
 class ReplyController extends Controller
 {
-    use routeUtils;
     private $reply;
 
     public function __construct()
@@ -29,6 +27,21 @@ class ReplyController extends Controller
             }
         } else {
             $this->redirectBack('입력되지 않은 값이 있습니다.');
+        }
+    }
+
+    public function read(){
+        $replyIdx = $_GET['reply_idx'];
+
+        if (isset($replyIdx)){
+            $result = $this->reply->read($replyIdx);
+            if ($result !== false) {
+                $this->echoJson(['result' => true, 'data' => $result]);
+            } else {
+                $this->echoJson(['result' => false, 'msg' => '댓글을 불러오는데 실패했습니다.']);
+            }
+        } else{
+            $this->echoJson(['result' => false, 'msg' => '입력 값이 올바르지 않습니다.']);
         }
     }
 }

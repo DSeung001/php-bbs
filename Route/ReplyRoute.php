@@ -13,7 +13,10 @@ class ReplyRoute extends Route
         if ($this->routeCheck($url, "reply/create", "POST")) {
             $replyController->create();
             return true;
-        }  else{
+        } else if($this->routeCheck($url, "reply/read", "GET")){
+            $replyController->read();
+            return true;
+        } else{
             return false;
         }
     }
