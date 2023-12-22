@@ -111,58 +111,31 @@ include "part/header.php";
                         <!-- 댓글 섹션 예시 -->
                         <div class="mt-4 card">
                             <div class="card-body">
+                                <input type="hidden" class="reply-idx" value="<?= $reply['idx'] ?>"/>
                                 <div class="media-body mb-3">
                                     <h5 class="mt-0"><?= $reply['name'] ?></h5>
                                     <p class="mb-0">작성일: <?= $reply['created_at'] ?></p>
                                     <?= nl2br($reply['content']) ?>
                                 </div>
-                                <button class="btn btn-primary btn-reply-edit" data-bs-toggle="modal" data-bs-target="#editModal">수정
+                                <button class="btn btn-primary btn-reply-edit" data-bs-toggle="modal"
+                                        data-bs-target="#editModal">
+                                    수정
                                 </button>
-                                <button class="btn btn-primary">댓글</button>
-                                <button class="btn btn-primary">삭제</button>
+                                <button class="btn btn-primary btn-reply-delete" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal">
+                                    삭제
+                                </button>
+                                <button class="btn btn-primary">
+                                    댓글
+                                </button>
                             </div>
                         </div>
                         <?php
                     }
                     ?>
-                    <!-- 모달 -->
-                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">댓글 수정</h5>
-                                    <button style="height: 35px;" type="button" class="btn-close btn btn-primary p-1"
-                                            data-bs-dismiss="modal" aria-label="Close">
-                                        <span style="width: 23px; height: 23px"
-                                              class="material-symbols-outlined">close</span>
-                                    </button>
-                                </div>
-                                <form>
-                                    <input type="hidden" name="replyIdx">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <label for="modalName" class="form-label">제목:</label>
-                                            <input type="text" class="form-control" id="modalName">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="modalPw" class="form-label">Password:</label>
-                                            <input type="text" class="form-control" id="modalPw">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="modalContent" class="form-label">내용:</label>
-                                            <textarea name="content" class="form-control" id="modalContent"
-                                                      rows="3"></textarea>
-                                        </div>
-                                    </div>
-                                </form>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <?php
+                    include_once "part/editModal.php";
+                    include_once "part/deleteModal.php";
                 }
             }
         } else {
@@ -194,18 +167,40 @@ include "part/header.php";
             });
         });
 
-        $(".btn-reply-edit").click(function (){
+        $(".btn-reply-edit").click(function () {
+            let replyIdx = $(this).parent().parent().find(".reply-idx").val();
             $.ajax({
                 url: "/bbs/reply/read",
                 type: "GET",
                 data: {
-                    reply_idx: 1
+                    reply_idx: replyIdx
                 },
                 success: function (data) {
                     if (data.result) {
-                        console.log(data.data);
-                        $("#modalName").val(data.data.name);
-                        $("#modalContent").val(data.data.content);
+                        $("#editModalName").val(data.data.name);
+                        $("#editModalContent").val(data.data.content);
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error: function (e) {
+                    alert("에러 발생");
+                }
+            })
+        })
+
+        $(".btn-reply-delete").click(function () {
+            let replyIdx = $(this).parent().parent().find(".reply-idx").val();
+            $.ajax({
+                url: "/bbs/reply/read",
+                type: "GET",
+                data: {
+                    reply_idx: replyIdx
+                },
+                success: function (data) {
+                    if (data.result) {
+                        $("#deleteModalName").text(data.data.name);
+                        $("#deleteModalContent").text(data.data.content);
                     } else {
                         alert(data.msg);
                     }
