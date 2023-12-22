@@ -25,4 +25,14 @@ trait ControllerUtils   {
         header('Content-Type: application/json');
         echo json_encode($data);
     }
+
+    public function parametersCheck(...$parameters): bool
+    {
+        foreach ($parameters as $parameter){
+            if (empty($parameter)){
+                return false;
+            }
+        }
+        return true;
+    }
 }

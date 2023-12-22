@@ -21,7 +21,7 @@ class PostController extends Controller
         $title = $_POST['title'];
         $content = $_POST['content'];
 
-        if (isset($name) && isset($pw) && isset($title) && isset($content)) {
+        if ($this->parametersCheck($name,$pw,$title,$content)) {
             if ($this->post->store($name, $pw, $title, $content)) {
                 $this->redirect('/bbs', '글이 작성되었습니다.');
             } else {
@@ -40,7 +40,7 @@ class PostController extends Controller
         $content = $_POST['content'];
         $lock = $_POST['lock'];
 
-        if (isset($idx) && isset($pw) && isset($title) && isset($content) && isset($lock)) {
+        if ($this->parametersCheck($idx, $pw, $title, $content, $lock)) {
             if ($this->post->update($idx, $pw, $title, $content, $lock)) {
                 $this->redirect('/bbs', '글이 수정되었습니다.');
             } else {
@@ -56,7 +56,7 @@ class PostController extends Controller
         $idx = $_POST['idx'];
         $pw = $_POST['pw'];
 
-        if (isset($idx) && isset($pw)) {
+        if ($this->parametersCheck($idx, $pw)) {
             if ($this->post->delete($idx, $pw)) {
                 $this->redirect('/bbs', '글이 삭제되었습니다.');
             } else {
@@ -72,7 +72,7 @@ class PostController extends Controller
         $idx = $_POST['idx'];
         $pw = $_POST['pw'];
 
-        if (isset($pw)) {
+        if ($this->parametersCheck($pw)) {
             if ($this->post->lockCheck($idx, $pw)) {
                 $this->redirect('/bbs/post/read?idx=' . $idx, '비밀번호가 일치합니다.');
             } else {
@@ -87,7 +87,7 @@ class PostController extends Controller
     {
         $postIdx = $_POST['post_idx'];
 
-        if (isset($postIdx)) {
+        if ($this->parametersCheck($postIdx)) {
             if ($this->post->thumbsUp($postIdx)) {
                 $this->echoJson(['result' => true, 'msg' => '추천되었습니다.']);
             } else {

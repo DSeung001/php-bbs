@@ -19,7 +19,7 @@ class ReplyController extends Controller
         $pw = $_POST['pw'];
         $content = $_POST['content'];
 
-        if (isset($postIdx) && isset($name) && isset($pw) && isset($content)) {
+        if ($this->parametersCheck($postIdx, $name, $pw, $content)) {
             if ($this->reply->store($postIdx, $name, $pw, $content)) {
                 $this->redirect('/bbs/post/read?idx=' . $postIdx, '댓글이 작성되었습니다.');
             } else {
@@ -33,7 +33,7 @@ class ReplyController extends Controller
     public function read(){
         $replyIdx = $_GET['reply_idx'];
 
-        if (isset($replyIdx)){
+        if ($this->parametersCheck($replyIdx)){
             $result = $this->reply->read($replyIdx);
             if ($result !== false) {
                 $this->echoJson(['result' => true, 'data' => $result]);
