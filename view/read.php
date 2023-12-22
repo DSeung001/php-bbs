@@ -1,5 +1,6 @@
 <!doctype html>
 <?php
+
 use DB\Connection;
 
 include "part/header.php";
@@ -70,7 +71,7 @@ include "part/header.php";
                 <a href="./update?idx=<?= $post['idx'] ?>" class="btn btn-primary">수정하기</a>
                 <a href="./delete?idx=<?= $post['idx'] ?>" class="btn btn-dark">삭제하기</a>
                 <button class="btn btn-success" id="thumbs_up">
-                    추천
+                    추천 <?= $post['thumbs_up'] != 0 ? "(".$post['thumbs_up'].")" : ''?>
                     <span class="material-symbols-outlined" style="font-size:16px">thumb_up</span>
                 </button>
 
@@ -132,19 +133,21 @@ include "part/header.php";
     $(document).ready(function () {
         $("#thumbs_up").click(function () {
             $.ajax({
-                url: "../Controller/PostController.php",
-                type: "post",
+                url: "/bbs/post/thumbsUp",
+                type: "POST",
                 data: {
-                    idx: <?= $idx ?>,
-                    thumbs_up: true
+                    post_idx: <?= $idx ?>
                 },
                 success: function (data) {
-                    if (data == "success") {
-                        alert("추천하였습니다.");
+                    if (data.result) {
+                        alert("추천되었습니다.");
                         location.reload();
                     } else {
-                        alert("추천에 실패하였습니다.");
+                        alert("이미 추천하셨습니다.");
                     }
+                },
+                error: function (e) {
+                    alert("에러 발생");
                 }
             });
         });

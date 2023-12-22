@@ -24,6 +24,5 @@ class Reply extends BaseModel
             error_log($e->getMessage());
             return false;
         }
-
     }
 }

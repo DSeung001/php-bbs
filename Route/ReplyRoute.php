@@ -8,12 +8,12 @@ class ReplyRoute extends Route
 {
     function routing($url): bool
     {
-        $ReplyController = new ReplyController();
+        $replyController = new ReplyController();
 
         if ($this->routeCheck($url, "reply/create", "POST")) {
-            $ReplyController->create();
+            $replyController->create();
             return true;
-        } else {
+        }  else{
             return false;
         }
     }

@@ -28,17 +28,17 @@ class PostRoute extends Route
         } else if ($this->routeCheck($url, "post/create", "POST")) {
             $PostController->create();
             return true;
-        } else if (
-            $this->routeCheck($url, "post/update", "POST")) {
+        } else if ($this->routeCheck($url, "post/update", "POST")) {
             $PostController->update();
             return true;
-        } else if (
-            $this->routeCheck($url, "post/delete", "POST")) {
+        } else if ($this->routeCheck($url, "post/delete", "POST")) {
             $PostController->delete();
             return true;
-        } else if (
-            $this->routeCheck($url, "post/lockCheck", "POST")) {
+        } else if ($this->routeCheck($url, "post/lockCheck", "POST")) {
             $PostController->lockCheck();
+            return true;
+        } else if ($this->routeCheck($url, "post/thumbsUp", "POST")) {
+            $PostController->thumbsUp();
             return true;
         } else {
             return false;

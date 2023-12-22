@@ -19,4 +19,9 @@ class Controller{
               </script>";
         exit();
     }
+
+    public function echoJson($data){
+        header('Content-Type: application/json');
+        echo json_encode($data);
+    }
 }

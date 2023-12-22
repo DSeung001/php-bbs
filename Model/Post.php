@@ -103,4 +103,24 @@ class Post extends BaseModel
             return false;
         }
     }
+
+    public function thumbsUp($idx){
+        try{
+            if (isset($_COOKIE["post_thumbs_up". $idx])){
+                return false;
+            }
+
+            $query = "UPDATE posts SET thumbs_up = thumbs_up + 1 WHERE idx = :idx";
+            $result = $this->conn->prepare($query)->execute([
+                'idx' => $idx
+            ]);
+            if ($result){
+                setcookie("post_thumbs_up". $idx, true, time() + 3600, "/") ;
+            }
+            return $result;
+        } catch (PDOException  $e){
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }
