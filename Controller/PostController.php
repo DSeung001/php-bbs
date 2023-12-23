@@ -88,13 +88,9 @@ class PostController extends Controller
         $postIdx = $_POST['post_idx'];
 
         if ($this->parametersCheck($postIdx)) {
-            if ($this->post->thumbsUp($postIdx)) {
-                $this->echoJson(['result' => true, 'msg' => '추천되었습니다.']);
-            } else {
-                $this->echoJson(['result' => false, 'msg' => '추천에 실패했습니다.']);
-            }
+            $this->echoJson($this->post->thumbsUp($postIdx));
         } else {
-            $this->echoJson(['result' => false, 'msg' => '입력 값이 올바르지 않습니다.']);
+            $this->redirectBack('입력되지 않은 값이 있습니다.');
         }
     }
 }

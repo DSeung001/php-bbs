@@ -1,4 +1,5 @@
 <?php
+
 namespace Controller;
 
 use Model\Reply;
@@ -30,18 +31,39 @@ class ReplyController extends Controller
         }
     }
 
-    public function read(){
+    public function read()
+    {
         $replyIdx = $_GET['reply_idx'];
 
-        if ($this->parametersCheck($replyIdx)){
-            $result = $this->reply->read($replyIdx);
-            if ($result !== false) {
-                $this->echoJson(['result' => true, 'data' => $result]);
-            } else {
-                $this->echoJson(['result' => false, 'msg' => '댓글을 불러오는데 실패했습니다.']);
-            }
-        } else{
+        if ($this->parametersCheck($replyIdx)) {
+            $this->echoJson($this->reply->read($replyIdx));
+        } else {
             $this->echoJson(['result' => false, 'msg' => '입력 값이 올바르지 않습니다.']);
+        }
+    }
+
+    public function update()
+    {
+        $replyIdx = $_POST['reply_idx'];
+        $pw = $_POST['pw'];
+        $content = $_POST['content'];
+
+        if ($this->parametersCheck($replyIdx, $pw, $content)) {
+            $this->echoJson($this->reply->update($replyIdx, $pw, $content));
+        } else {
+            $this->redirectBack('입력되지 않은 값이 있습니다.');
+        }
+    }
+
+    public function delete()
+    {
+        $replyIdx = $_POST['reply_idx'];
+        $pw = $_POST['pw'];
+
+        if ($this->parametersCheck($replyIdx, $pw)) {
+            $this->echoJson($this->reply->delete($replyIdx, $pw));
+        } else {
+            $this->redirectBack('입력되지 않은 값이 있습니다.');
         }
     }
 }

@@ -154,11 +154,9 @@ include "part/header.php";
                     post_idx: <?= $idx ?>
                 },
                 success: function (data) {
+                    alert(data.msg);
                     if (data.result) {
-                        alert("추천되었습니다.");
                         location.reload();
-                    } else {
-                        alert("이미 추천하셨습니다.");
                     }
                 },
                 error: function (e) {
@@ -169,6 +167,7 @@ include "part/header.php";
 
         $(".btn-reply-edit").click(function () {
             let replyIdx = $(this).parent().parent().find(".reply-idx").val();
+            $("#editModal .modal-reply-idx").val(replyIdx);
             $.ajax({
                 url: "/bbs/reply/read",
                 type: "GET",
@@ -178,19 +177,21 @@ include "part/header.php";
                 success: function (data) {
                     if (data.result) {
                         $("#editModalName").val(data.data.name);
+                        $("#editModalPw").val("")
                         $("#editModalContent").val(data.data.content);
                     } else {
                         alert(data.msg);
                     }
                 },
                 error: function (e) {
-                    alert("에러 발생");
+                    alert("에러 발생 : " + e.responseText);
                 }
             })
         })
 
         $(".btn-reply-delete").click(function () {
             let replyIdx = $(this).parent().parent().find(".reply-idx").val();
+            $("#deleteModal .modal-reply-idx").val(replyIdx);
             $.ajax({
                 url: "/bbs/reply/read",
                 type: "GET",
@@ -200,13 +201,61 @@ include "part/header.php";
                 success: function (data) {
                     if (data.result) {
                         $("#deleteModalName").text(data.data.name);
+                        $("#deleteModalPw").val("")
                         $("#deleteModalContent").text(data.data.content);
                     } else {
                         alert(data.msg);
                     }
                 },
                 error: function (e) {
-                    alert("에러 발생");
+                    alert("에러 발생 : " + e.responseText);
+                }
+            })
+        })
+
+        $("#editModalSubmit").click(function (){
+            $.ajax({
+                url: "/bbs/reply/update",
+                type: "POST",
+                data: {
+                    reply_idx: $("#editModal .modal-reply-idx").val(),
+                    pw: $("#editModalPw").val(),
+                    content: $("#editModalContent").val()
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.result) {
+                        alert(data.msg);
+                        location.reload();
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error : function (e) {
+                    alert("에러 발생 : " + e.responseText);
+                }
+            })
+        })
+
+        $("#deleteModalSubmit").click(function (){
+            $.ajax({
+                url: "/bbs/reply/delete",
+                type: "POST",
+                data: {
+                    reply_idx: $("#deleteModal .modal-reply-idx").val(),
+                    pw: $("#deleteModalPw").val()
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.result) {
+                        alert(data.msg);
+                        location.reload();
+                    } else {
+                        alert(data.msg);
+                    }
+                },
+                error : function (e) {
+                    alert("에러 발생 : " + e.responseText);
                 }
             })
         })

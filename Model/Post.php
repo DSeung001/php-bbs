@@ -10,7 +10,14 @@ class Post extends BaseModel
         parent::__construct();
     }
 
-    public function store($name, $pw, $title, $content)
+    /**
+     * @param $name
+     * @param $pw
+     * @param $title
+     * @param $content
+     * @return bool
+     */
+    public function store($name, $pw, $title, $content): bool
     {
         try {
             $hashed_pw = password_hash($pw, PASSWORD_DEFAULT);
@@ -27,7 +34,15 @@ class Post extends BaseModel
         }
     }
 
-    public function update($idx, $pw, $title, $content, $lock)
+    /**
+     * @param $idx
+     * @param $pw
+     * @param $title
+     * @param $content
+     * @param $lock
+     * @return bool
+     */
+    public function update($idx, $pw, $title, $content, $lock): bool
     {
         try {
             $query = "SELECT pw FROM posts WHERE idx = :idx";
@@ -56,7 +71,13 @@ class Post extends BaseModel
         }
     }
 
-    public function delete ($idx, $pw){
+    /**
+     * @param $idx
+     * @param $pw
+     * @return bool
+     */
+    public function delete($idx, $pw): bool
+    {
         try {
             $query = "SELECT pw FROM posts WHERE idx = :idx";
             $stmt = $this->conn->prepare($query);
@@ -81,7 +102,12 @@ class Post extends BaseModel
         }
     }
 
-    public function lockCheck($idx, $pw)
+    /**
+     * @param $idx
+     * @param $pw
+     * @return bool
+     */
+    public function lockCheck($idx, $pw): bool
     {
         try {
             echo $idx;
@@ -104,10 +130,18 @@ class Post extends BaseModel
         }
     }
 
-    public function thumbsUp($idx){
+    /**
+     * @param $idx
+     * @return array
+     */
+    public function thumbsUp($idx):array
+    {
         try{
             if (isset($_COOKIE["post_thumbs_up". $idx])){
-                return false;
+                return [
+                    'result' => false,
+                    'msg' => '이미 추천하셨습니다.'
+                ];
             }
 
             $query = "UPDATE posts SET thumbs_up = thumbs_up + 1 WHERE idx = :idx";
@@ -116,11 +150,21 @@ class Post extends BaseModel
             ]);
             if ($result){
                 setcookie("post_thumbs_up". $idx, true, time() + 3600, "/") ;
+                return [
+                    'result' => true,
+                    'msg' => '추천되었습니다.'
+                ];
             }
-            return $result;
+            return [
+                'result' => false,
+                'msg' => '추천에 실패했습니다.'
+            ];
         } catch (PDOException  $e){
             error_log($e->getMessage());
-            return false;
+            return [
+                'result' => false,
+                'msg' => '알 수 없는 에러가 발생했습니다, 관리자에게 문의주세요.'
+            ];
         }
     }
 }

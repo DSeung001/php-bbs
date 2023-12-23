@@ -2,7 +2,7 @@
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="">
+            <form id="deleteModalForm">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deleteModalLabel">댓글 삭제</h5>
                     <button style="height: 35px;" type="button"
@@ -12,7 +12,7 @@
                                               class="material-symbols-outlined">close</span>
                     </button>
                 </div>
-                <input type="hidden" name="replyIdx">
+                <input type="hidden" name="reply_idx" class="modal-reply-idx">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Name:</label>
@@ -20,7 +20,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="deleteModalPw" class="form-label">Password:</label>
-                        <input type="text" class="form-control" id="deleteModalPw">
+                        <input name="pw" type="password" class="form-control" id="deleteModalPw">
                     </div>
                     <div class="mb-3">
                         <label for="editModalContent" class="form-label">내용:</label>
@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">삭제</button>
+                    <button type="button" id="deleteModalSubmit" class="btn btn-primary">삭제</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                 </div>
             </form>
