@@ -129,13 +129,14 @@ $(document).ready(function () {
             $("#subReplyForm").remove();
         }
 
-        $(this).parent().parent().after("<div class=\"mt-4 card ml-4\" id=\"subReplyForm\">\n" +
+        $(this).parent().parent().after(
+            "<div class=\"mt-4 card ml-4\" id=\"subReplyForm\">\n" +
             "            <div class=\"card-body\">\n" +
             "                <form action=\"/bbs/reply/create\" method=\"post\">\n" +
             "                    <h5>대댓글</h5>\n" +
-            "                    <input type=\"hidden\" class=\"reply-idx\" value=\""+replyIdx+"\"/>\n" +
+            "                    <input name=\"post_idx\" type=\"hidden\" class=\"reply-idx\" value=\""+postIdx+"\"/>\n" +
             "                    <div class=\"media-body mb-3\">\n" +
-            "                        <input type=\"hidden\" name=\"post_idx\" value=\""+postIdx+"\">\n" +
+            "                        <input name=\"parent_idx\" type=\"hidden\" name=\"post_idx\" value=\""+replyIdx+"\">\n" +
             "                        <div class=\"form-row\">\n" +
             "                            <div class=\"form-group col-md-6\">\n" +
             "                                <label for=\"name\">Name</label>\n" +
@@ -147,7 +148,6 @@ $(document).ready(function () {
             "                                       placeholder=\"Password를 입력해주세요.\">\n" +
             "                            </div>\n" +
             "                        </div>\n" +
-            "\n" +
             "                        <label for=\"content\">내용:</label>\n" +
             "                        <textarea name=\"content\" class=\"form-control\" id=\"content\" rows=\"3\"></textarea>\n" +
             "                    </div>\n" +

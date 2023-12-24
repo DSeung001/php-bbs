@@ -144,4 +144,30 @@ class Reply extends BaseModel
             ];
         }
     }
+
+    /**
+     * @param $postIdx
+     * @param $parentIdx
+     * @param $name
+     * @param $pw
+     * @param $content
+     * @return bool
+     */
+    public function subReplyStore($postIdx, $parentIdx, $name, $pw, $content): bool
+    {
+        try {
+            $hashed_pw = password_hash($pw, PASSWORD_DEFAULT);
+            $query = "INSERT INTO replies (post_idx, parent_idx, name, pw, content) VALUES (:post_idx, :parent_idx, :name, :pw, :content)";
+            return $this->conn->prepare($query)->execute([
+                'post_idx' => $postIdx,
+                'parent_idx' => $parentIdx,
+                'name' => $name,
+                'pw' => $hashed_pw,
+                'content' => $content
+            ]);
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }

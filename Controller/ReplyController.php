@@ -19,12 +19,21 @@ class ReplyController extends Controller
         $name = $_POST['name'];
         $pw = $_POST['pw'];
         $content = $_POST['content'];
+        $parentIdx = $_POST['parent_idx'];
 
         if ($this->parametersCheck($postIdx, $name, $pw, $content)) {
-            if ($this->reply->store($postIdx, $name, $pw, $content)) {
-                $this->redirect('/bbs/post/read?idx=' . $postIdx, '댓글이 작성되었습니다.');
+            if (empty($parentIdx)) {
+                if ($this->reply->store($postIdx, $name, $pw, $content)) {
+                    $this->redirect('/bbs/post/read?idx=' . $postIdx, '댓글이 작성되었습니다.');
+                } else {
+                    $this->redirectBack('댓글 작성에 실패했습니다.');
+                }
             } else {
-                $this->redirectBack('댓글 작성에 실패했습니다.');
+                if ($this->reply->subReplyStore($postIdx, $parentIdx, $name, $pw, $content)) {
+                    $this->redirect('/bbs/post/read?idx=' . $postIdx, '댓글이 작성되었습니다.');
+                } else {
+                    $this->redirectBack('댓글 작성에 실패했습니다.');
+                }
             }
         } else {
             $this->redirectBack('입력되지 않은 값이 있습니다.');
@@ -51,7 +60,7 @@ class ReplyController extends Controller
         if ($this->parametersCheck($replyIdx, $pw, $content)) {
             $this->echoJson($this->reply->update($replyIdx, $pw, $content));
         } else {
-            $this->redirectBack('입력되지 않은 값이 있습니다.');
+            $this->echoJson(['result' => false, 'msg' => '입력되지 않은 값이 있습니다.']);
         }
     }
 
@@ -63,7 +72,7 @@ class ReplyController extends Controller
         if ($this->parametersCheck($replyIdx, $pw)) {
             $this->echoJson($this->reply->delete($replyIdx, $pw));
         } else {
-            $this->redirectBack('입력되지 않은 값이 있습니다.');
+            $this->echoJson(['result' => false, 'msg' => '입력되지 않은 값이 있습니다.']);
         }
     }
 }
