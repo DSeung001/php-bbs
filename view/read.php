@@ -107,9 +107,7 @@ include "part/header.php";
         <?php
         $replies = $conn->query("select * from replies where post_idx = " . $idx . " and parent_idx IS null order by idx")->fetchAll();
         if ($replies) {
-        foreach ($replies
-
-        as $reply) {
+            foreach ($replies as $reply) {
         ?>
 
         <!-- 댓글 섹션 예시 -->
@@ -135,14 +133,10 @@ include "part/header.php";
             </div>
         </div>
 
-
-
         <?php
         $subReplies = $conn->query("select * from replies where parent_idx = " . $reply['idx'] . " order by idx")->fetchAll();
         if ($subReplies) {
-        foreach ($subReplies
-
-        as $subReply) {
+            foreach ($subReplies as $subReply) {
         ?>
         <div class="mt-4 card ml-4">
             <div class="card-body">
@@ -160,16 +154,10 @@ include "part/header.php";
                 </button>
             </div>
             <?php
-            }
-            }
-            }
-            ?>
-            <?php
+            }}}
             include_once "part/editModal.php";
             include_once "part/deleteModal.php";
-            }
-            }
-            } else {
+            }}} else {
                 echo "<script>alert('존재하지 않는 게시물입니다.');history.back();</script>";
             }
             ?>
