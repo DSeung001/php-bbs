@@ -2,5 +2,6 @@
     RewriteEngine On
     RewriteBase /bbs
     RewriteCond %{REQUEST_FILENAME} !^/view/404\.php
+    RewriteCond %{REQUEST_URI} !^/bbs/assets/
     RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 </IfModule>
