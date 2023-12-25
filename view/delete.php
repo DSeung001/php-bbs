@@ -10,7 +10,7 @@ $conn = new connection();
 $conn = $conn->getConnection();
 $stmt = $conn->prepare("select * from posts where idx = :idx");
 $stmt->bindParam('idx', $_GET['idx']);
-$post = $stmt->execute();
+$stmt->execute();
 $post = $stmt->fetch();
 if ($post) {
     ?>

@@ -17,7 +17,7 @@ include "part/header.php";
         $conn = $conn->getConnection();
         $stmt = $conn->prepare("select * from posts where idx = :idx");
         $stmt->bindParam('idx', $idx);
-        $post = $stmt->execute();
+        $stmt->execute();
         $post = $stmt->fetch();
 
         if ($post) {
