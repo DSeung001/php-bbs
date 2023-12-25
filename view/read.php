@@ -127,7 +127,7 @@ include "part/header.php";
                                         data-bs-target="#deleteModal">
                                     삭제
                                 </button>
-                                <button class="btn btn-primary btn-sub-reply">
+                                <button class="btn btn-primary btnSubReply">
                                     대댓글
                                 </button>
                             </div>

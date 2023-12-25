@@ -1,4 +1,5 @@
 <?php
+
 use DB\Connection;
 
 $conn = new Connection();
@@ -14,10 +15,27 @@ include "part/header.php";
 
     <div id="write_btn" class="mb-4">
         <p class="d-inline">자유롭게 글을 쓸 수 있는 게시판입니다.</p>
-
         <a href="./create">
             <button class="btn btn-primary float-right">글쓰기</button>
         </a>
+    </div>
+
+    <!--검색-->
+    <div class="container mt-4 mb-3">
+        <form action="" method="get">
+            <div class="row">
+                <div class="col-md-6 offset-md-3">
+                    <div class="form-inline full-width-form">
+                        <div class="form-group mb-2 flex-fill">
+                            <label for="searchInput" class="sr-only">검색</label>
+                            <input name="search" type="text" class="form-control w-100" id="searchInput" placeholder="Search"
+                                   value="<?= $_GET['search'] ?? '' ?>">
+                        </div>
+                        <button id="searchSubmit" type="submit" class="btn btn-primary mb-2">검색</button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
     <!-- 게시물 목록 테이블 -->
@@ -33,41 +51,54 @@ include "part/header.php";
         </tr>
         </thead>
         <tbody>
-        <!-- 게시물 아이템 -->
-
         <?php
+        // 현재 페이지
         $currentPage = $_GET['page'] ?? 1;
         $perPage = 5;
         $startPage = ($currentPage - 1) * $perPage;
 
-        $total = $conn->query("select count(idx) from posts")->fetchColumn();
+        // 전체 게시글 수
+        $totalStmt = $conn->prepare("select count(idx) from posts where title like :search");
+        $totalStmt->bindValue('search', '%' . ($_GET['search'] ?? '') . '%');
+        $totalStmt->execute();
+        $total = $totalStmt->fetchColumn();
+
+        // 전체 페이지 및 현재 보여줄 마지막 페이지
         $totalPage = ceil($total / $perPage);
         $endPage = $totalPage > $currentPage + 4 ? $currentPage + 4 : $totalPage;
 
-        // board테이블에서 idx를 기준으로 내림차순해서 10개까지 표시
-        $stmt = $conn->prepare("select * from posts order by idx desc limit :start, :perPage");
-        $stmt->bindParam('start', $startPage, PDO::PARAM_INT);
-        $stmt->bindParam('perPage', $perPage, PDO::PARAM_INT);
-        $stmt->execute();
-        $posts = $stmt->fetchAll();
+        // 게시글 목록 가져오기
+        $dataStmt = $conn->prepare("select p.*,
+        (SELECT COUNT(*) FROM replies r WHERE r.post_idx = p.idx) AS reply_count,
+        CASE WHEN TIMESTAMPDIFF(MINUTE, p.created_at, NOW()) <= 1440 THEN 1
+        ELSE 0 END AS is_new
+        from posts p
+        where p.title like :search
+        order by idx desc limit :start, :perPage");
+        $dataStmt->bindValue('search', '%' . ($_GET['search'] ?? '') . '%');
+        $dataStmt->bindParam('start', $startPage, PDO::PARAM_INT);
+        $dataStmt->bindParam('perPage', $perPage, PDO::PARAM_INT);
+        $dataStmt->execute();
+        $posts = $dataStmt->fetchAll();
 
         if ($posts) {
+            $bonusIdx = 0;
             foreach ($posts as $post) {
-
                 /// 30 글자 초과시 ... 저리
                 $title = $post["title"];
                 if (strlen($title) > 30) {
                     $title = str_replace($post["title"], mb_substr($post["title"], 0, 30, "utf-8") . "...", $post["title"]);
                 }
-
-                $replyCount = $conn->query("select count(*) from replies where post_idx = $post[idx]")->fetchColumn();
                 ?>
 
                 <tr>
-                    <td><?= $post['idx']; ?></td>
+                    <td><?= $total - ($startPage + $bonusIdx++) ?></td>
                     <td>
                         <a href="./read?idx=<?= $post['idx'] ?>">
-                            <?= $title . " [" . $replyCount . "]"; ?>
+                            <?= $title . " [" . $post['reply_count'] . "]"; ?>
+                            <?php if ($post['is_new']) { ?>
+                                <span class="badge badge-primary">new</span>
+                            <?php } ?>
                         </a>
                     </td>
                     <td><?= $post['name'] ?></td>
@@ -81,7 +112,6 @@ include "part/header.php";
             echo "<tr><td colspan='6' class='text-center'>게시글이 없습니다.</td></tr>";
         }
         ?>
-        <!-- 추가적인 게시물 아이템들을 여기에 추가 -->
         </tbody>
     </table>
 
@@ -94,10 +124,9 @@ include "part/header.php";
                 </a>
             </li>
             <?php
-            //           반복문 수정해서 중간일 경우 이전 페이지 4개가 보이고 뒤로는 5개가 보이게
             for ($page = max($currentPage - 4, 1); $page <= $endPage; $page++) {
                 $isActive = $page == $currentPage ? 'active' : '';
-                echo "<li class='page-item $isActive'><a class='page-link' href='?page=$page'>$page</a></li>";
+                echo "<li class='page-item $isActive'><span class='page-link' data-page='$page'>$page</span></li>";
             }
             ?>
             <li class="page-item">
@@ -109,4 +138,5 @@ include "part/header.php";
     </nav>
 </div>
 </body>
+<script src="/bbs/assets/script/index.js"></script>
 </html>

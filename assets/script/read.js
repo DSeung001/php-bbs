@@ -121,7 +121,7 @@ $(document).ready(function () {
     })
 
     // 대댓글 작성 폼 생성 기능
-    $(".btn-sub-reply").click(function (){
+    $(".btnSubReply").click(function (){
         let replyIdx = $(this).parent().find(".reply-idx").val();
         let postIdx = $("#postIdx").val();
         let subReplyFormExist = $("#subReplyForm").length > 0;
