@@ -2,7 +2,6 @@
 
 namespace Migration;
 
-require_once "../bootstrap.php";
 use DB\Connection;
 use PDOException;
 
@@ -33,15 +32,15 @@ class Post
             title VARCHAR(100) NOT NULL,
             content TEXT NOT NULL,
             views INT(6) UNSIGNED DEFAULT 0,
-            lock INT(1) UNSIGNED DEFAULT 0,
+            `lock` INT(1) UNSIGNED DEFAULT 0,
             thumbs_up INT(6) UNSIGNED DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
                 $this->conn->exec($createTableSQL);
-                echo "Table $tableName created successfully<br/>";
+                echo "Table $tableName created successfully\n";
             } else {
-                echo "Table $tableName already exists<br/>";
+                echo "Table $tableName already exists\n";
             }
         } catch
         (PDOException $e) {

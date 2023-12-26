@@ -4,14 +4,12 @@ use PDO;
 
 class Connection
 {
-    private $root;
     private $conn = null;
     private $config;
 
     public function __construct()
     {
-        $this->root = $_SERVER['DOCUMENT_ROOT'];
-        $this->config = parse_ini_file($this->root . '/bbs/config.ini');
+        $this->config = parse_ini_file(__DIR__ . '/../config.ini');
     }
 
     public function getConnection()

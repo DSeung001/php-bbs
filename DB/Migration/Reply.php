@@ -1,7 +1,7 @@
 <?php
 
 namespace Migration;
-require_once "../bootstrap.php";
+
 use DB\Connection;
 use PDOException;
 
@@ -35,9 +35,9 @@ class Reply
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
                 $this->conn->exec($createTableSQL);
-                echo "Table $tableName created successfully<br/>";
+                echo "Table $tableName created successfully\n";
             } else {
-                echo "Table $tableName already exists<br/>";
+                echo "Table $tableName already exists\n";
             }
         } catch
         (PDOException $e) {
