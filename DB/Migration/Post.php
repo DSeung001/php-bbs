@@ -44,7 +44,7 @@ class Post
             }
         } catch
         (PDOException $e) {
-            echo "Connection failed: " . $e->getMessage()."<br/>";
+            echo "Connection failed: " . $e->getMessage()."\n";
         }
     }
 }

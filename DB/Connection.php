@@ -1,6 +1,7 @@
 <?php
 namespace DB;
 use PDO;
+use PDOException;
 
 class Connection
 {
@@ -9,6 +10,7 @@ class Connection
 
     public function __construct()
     {
+        // config.ini 통해 DB 접속 정보 가져옴
         $this->config = parse_ini_file(__DIR__ . '/../config.ini');
     }
 
@@ -16,7 +18,7 @@ class Connection
     {
         if ($this->conn == null) {
             try {
-                // 기본 연결 정보로 접속하여 존재 여부 확인
+                // 데이터 베이스 연결
                 $dsn = "mysql:host={$this->config['DB_HOSTNAME']};charset=utf8";
                 $conn = new PDO($dsn, $this->config['DB_USER'], $this->config['DB_PASSWORD']);
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -27,7 +29,7 @@ class Connection
                 if ($result->rowCount() == 0) {
                     // 데이터베이스가 존재하지 않으면 생성
                     $conn->exec("CREATE DATABASE {$this->config['DB_NAME']}");
-                    echo "Database {$this->config['DB_NAME']} created successfully.<br/>";
+                    echo "Database {$this->config['DB_NAME']} created successfully.\n";
                 }
 
                 $conn->query("use " . $this->config['DB_NAME']);
@@ -37,6 +39,7 @@ class Connection
             }
             $this->conn = $conn;
         }
+        // 이상이 없을 경우 연결 객체 반환
         return $this->conn;
     }
 }
