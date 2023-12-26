@@ -8,4 +8,10 @@ trait RouteUtils{
         return strpos($origin, $path) !== false
             && $_SERVER['REQUEST_METHOD'] == $method;
     }
+
+    public function requireView($viewName): bool
+    {
+        require_once(__DIR__ . '/../view/' . $viewName . '.php');
+        return true;
+    }
 }

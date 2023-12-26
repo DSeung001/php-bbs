@@ -11,20 +11,15 @@ class PostRoute extends Route
         $PostController = new PostController();
 
         if ($this->routeCheck($url, "post/list", "GET")) {
-            require_once(__DIR__ . '/../view/index.php');
-            return true;
+            return $this->requireView('index');
         } else if ($this->routeCheck($url, "post/create", "GET")) {
-            require_once(__DIR__ . '/../view/create.php');
-            return true;
+            return $this->requireView('create');
         } else if ($this->routeCheck($url, "post/read", "GET")) {
-            require_once(__DIR__ . '/../view/read.php');
-            return true;
+            return $this->requireView('read');
         } else if ($this->routeCheck($url, "post/update", "GET")) {
-            require_once(__DIR__ . '/../view/update.php');
-            return true;
+            return $this->requireView('update');
         } else if ($this->routeCheck($url, "post/delete", "GET")) {
-            require_once(__DIR__ . '/../view/delete.php');
-            return true;
+            return $this->requireView('delete');
         } else if ($this->routeCheck($url, "post/create", "POST")) {
             $PostController->create();
             return true;
