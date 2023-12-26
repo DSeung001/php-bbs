@@ -1,6 +1,8 @@
 <?php
+
 namespace Model;
 
+use PDO;
 use PDOException;
 
 class Post extends BaseModel
@@ -17,7 +19,7 @@ class Post extends BaseModel
      * @param $content
      * @return bool
      */
-    public function store($name, $pw, $title, $content): bool
+    public function create($name, $pw, $title, $content): bool
     {
         try {
             $hashed_pw = password_hash($pw, PASSWORD_DEFAULT);
@@ -122,7 +124,7 @@ class Post extends BaseModel
             if (!$check || !password_verify($pw, $check['pw'])) {
                 return false;
             }
-            setcookie("post_key". $idx, $pw, time() + 3600, "/") ;
+            setcookie("post_key" . $idx, $pw, time() + 3600, "/");
             return true;
         } catch (PDOException $e) {
             error_log($e->getMessage());
@@ -134,10 +136,10 @@ class Post extends BaseModel
      * @param $idx
      * @return array
      */
-    public function thumbsUp($idx):array
+    public function thumbsUp($idx): array
     {
-        try{
-            if (isset($_COOKIE["post_thumbs_up". $idx])){
+        try {
+            if (isset($_COOKIE["post_thumbs_up" . $idx])) {
                 return [
                     'result' => false,
                     'msg' => '이미 추천하셨습니다.'
@@ -148,8 +150,8 @@ class Post extends BaseModel
             $result = $this->conn->prepare($query)->execute([
                 'idx' => $idx
             ]);
-            if ($result){
-                setcookie("post_thumbs_up". $idx, true, time() + 3600, "/") ;
+            if ($result) {
+                setcookie("post_thumbs_up" . $idx, true, time() + 3600, "/");
                 return [
                     'result' => true,
                     'msg' => '추천되었습니다.'
@@ -159,12 +161,97 @@ class Post extends BaseModel
                 'result' => false,
                 'msg' => '추천에 실패했습니다.'
             ];
-        } catch (PDOException  $e){
+        } catch (PDOException  $e) {
             error_log($e->getMessage());
             return [
                 'result' => false,
                 'msg' => '알 수 없는 에러가 발생했습니다, 관리자에게 문의주세요.'
             ];
+        }
+    }
+
+    /**
+     * @param $idx
+     * @return array|mixed
+     */
+    public function getPost($idx)
+    {
+        try {
+            $query = "SELECT * FROM posts WHERE idx = :idx LIMIT 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx
+            ]);
+            return $stmt->fetch();
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * @param $idx
+     * @return bool|void
+     */
+    public function increaseViews($idx)
+    {
+        try {
+            if (!isset($_COOKIE['post_views' . $idx])) {
+                $stmt = $this->conn->prepare("update posts set views = views + 1 where idx = :idx");
+                $stmt->bindParam('idx', $idx);
+                $stmt->execute();
+                setcookie('post_views' . $idx, true, time() + 60 * 60 * 24, '/');
+                return true;
+            }
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * @param $search
+     * @return int|mixed
+     */
+    public function count($search)
+    {
+        try {
+            $query = "SELECT count(idx) FROM posts WHERE title like :search";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue('search', '%' . ($search ?? '') . '%');
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * @param $search
+     * @param $start
+     * @param $perPage
+     * @return array|false
+     */
+    public function getPosts($search, $start, $perPage)
+    {
+        try {
+            $query = "select p.*,
+        (SELECT COUNT(*) FROM replies r WHERE r.post_idx = p.idx) AS reply_count,
+        CASE WHEN TIMESTAMPDIFF(MINUTE, p.created_at, NOW()) <= 1440 THEN 1
+        ELSE 0 END AS is_new
+        from posts p
+        where p.title like :search
+        order by idx desc limit :start, :perPage";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue('search', '%' . ($search ?? '') . '%');
+            $stmt->bindParam('start', $start, PDO::PARAM_INT);
+            $stmt->bindParam('perPage', $perPage, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return [];
         }
     }
 }

@@ -1,18 +1,17 @@
 <!doctype html>
 <?php
+
 use DB\Connection;
+use Model\Post;
 
 include "part/header.php";
 ?>
 <body>
 <?php
-$conn = new connection();
-$conn = $conn->getConnection();
-$stmt = $conn->prepare("select * from posts where idx = :idx");
-$stmt->bindParam('idx', $_GET['idx']);
-$stmt->execute();
-$post = $stmt->fetch();
-if ($post) {
+$post = new Post();
+$idx = $_GET['idx'];
+$postInfo = $post->getPost($idx);
+if ($postInfo) {
     ?>
     <div class="m-4">
         <div class="container mt-5">
@@ -20,22 +19,22 @@ if ($post) {
             <p class="mt-1">글을 삭제하는 공간입니다.</p>
 
             <form action="/bbs/post/delete" method="post">
-                <span class="mr-2">작성일: <?= $post['created_at'] ?></span>
-                <span class="mr-2">수정일: <?= $post['updated_at'] ?></span>
-                <span class="mr-2">조회수: <?= $post['hit'] ?></span>
-                <span class="mr-2">추천수: <?= $post['thumbs_up'] ?></span>
+                <span class="mr-2">작성일: <?= $postInfo['created_at'] ?></span>
+                <span class="mr-2">수정일: <?= $postInfo['updated_at'] ?></span>
+                <span class="mr-2">조회수: <?= $postInfo['views'] ?></span>
+                <span class="mr-2">추천수: <?= $postInfo['thumbs_up'] ?></span>
 
-                <input type="hidden" name="idx" value="<?= $_GET['idx'] ?>">
+                <input type="hidden" name="idx" value="<?= $idx ?>">
 
                 <div class="form-group mt-3">
                     <label for="title">제목</label>
-                    <p><?= $post['title'] ?></p>
+                    <p><?= $postInfo['title'] ?></p>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Name</label>
-                        <p> <?= $post['name'] ?></p>
+                        <p> <?= $postInfo['name'] ?></p>
                     </div>
 
                     <div class="form-group col-md-6">
@@ -46,7 +45,7 @@ if ($post) {
 
                 <button type="submit" class="btn btn-primary">삭제</button>
                 <a href="/bbs" class="btn btn-secondary">목록</a>
-                <a href="./read?idx=<?= $post['idx'] ?>" class="btn btn-secondary">뒤로가기</a>
+                <a href="./read?idx=<?= $postInfo['idx'] ?>" class="btn btn-secondary">뒤로가기</a>
             </form>
         </div>
     </div>

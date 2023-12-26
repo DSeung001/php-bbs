@@ -22,7 +22,7 @@ class PostController extends Controller
         $content = $_POST['content'];
 
         if ($this->parametersCheck($name,$pw,$title,$content)) {
-            if ($this->post->store($name, $pw, $title, $content)) {
+            if ($this->post->create($name, $pw, $title, $content)) {
                 $this->redirect('/bbs', '글이 작성되었습니다.');
             } else {
                 $this->redirectBack('글 작성에 실패했습니다.');
@@ -40,7 +40,7 @@ class PostController extends Controller
         $content = $_POST['content'];
         $lock = $_POST['lock'];
 
-        if ($this->parametersCheck($idx, $pw, $title, $content, $lock)) {
+        if ($this->parametersCheck($idx, $pw, $title, $content)) {
             if ($this->post->update($idx, $pw, $title, $content, $lock)) {
                 $this->redirect('/bbs', '글이 수정되었습니다.');
             } else {

@@ -1,7 +1,8 @@
 <!doctype html>
 <?php
 
-use DB\Connection;
+use Model\Post;
+use Model\Reply;
 
 include "part/header.php";
 ?>
@@ -13,21 +14,19 @@ include "part/header.php";
         <hr/>
         <?php
         $idx = $_GET['idx'];
-        $conn = new connection();
-        $conn = $conn->getConnection();
-        $stmt = $conn->prepare("select * from posts where idx = :idx");
-        $stmt->bindParam('idx', $idx);
-        $stmt->execute();
-        $post = $stmt->fetch();
+        $post = new Post();
+        $reply = new Reply();
 
-        if ($post) {
+        $postInfo = $post->getPost($idx);
+
+        if ($postInfo) {
             // 게시글의 락 여부와 락 쿠키 체크
             $pass = false;
-            if (isset($_COOKIE['post_key' . $post['idx']])
-                && password_verify($_COOKIE['post_key' . $post['idx']], $post['pw'])) {
+            if (isset($_COOKIE['post_key' . $postInfo['idx']])
+                && password_verify($_COOKIE['post_key' . $postInfo['idx']], $postInfo['pw'])) {
                 $pass = true;
             }
-            if ($post['lock'] == 1 && !$pass) {
+            if ($postInfo['lock'] == 1 && !$pass) {
                 ?>
                 <form action="/bbs/post/lockCheck" method="post">
                     <p>비밀글입니다, 보기 위해서는 비밀번호가 필요합니다.</p>
@@ -41,38 +40,35 @@ include "part/header.php";
                 </form>
                 <?php
             } else {
-                $hitBonus = 0;
-                if (!isset($_COOKIE['post_hit' . $idx])) {
-                    $stmt = $conn->prepare("update posts set hit = hit + 1 where idx = :idx");
-                    $stmt->bindParam('idx', $idx);
-                    $stmt->execute();
-                    setcookie('post_hit' . $post['idx'], true, time() + 60 * 60 * 24, '/');
-                    $hitBonus = 1;
+                $viewsBonus = 0;
+                if (!isset($_COOKIE['post_views' . $idx])) {
+                    $post->increaseViews($idx);
+                    $viewsBonus = 1;
                 }
                 ?>
                 <div>
-                    <h5 class="d-inline">제목) <?= $post['title'] ?></h5>
-                    <p class="float-right">글쓴이) <?= $post['name'] ?></p>
+                    <h5 class="d-inline">제목) <?= $postInfo['title'] ?></h5>
+                    <p class="float-right">글쓴이) <?= $postInfo['name'] ?></p>
                 </div>
-                <span class="mr-2">작성일: <?= $post['created_at'] ?></span>
-                <span class="mr-2">수정일: <?= $post['updated_at'] ?></span>
-                <span class="mr-2">조회수: <?= $post['hit'] + $hitBonus ?></span>
-                <span class="mr-2">추천수: <?= $post['thumbs_up'] ?></span>
+                <span class="mr-2">작성일: <?= $postInfo['created_at'] ?></span>
+                <span class="mr-2">수정일: <?= $postInfo['updated_at'] ?></span>
+                <span class="mr-2">조회수: <?= $postInfo['views'] + $viewsBonus ?></span>
+                <span class="mr-2">추천수: <?= $postInfo['thumbs_up'] ?></span>
                 <hr/>
 
                 <div class="card mb-3">
                     <div class="card-body">
                         <p class="card-text">
-                            <?= nl2br($post['content']) ?>
+                            <?= nl2br($postInfo['content']) ?>
                         </p>
                     </div>
                 </div>
 
-                <a href="./update?idx=<?= $post['idx'] ?>" class="btn btn-primary">수정하기</a>
+                <a href="./update?idx=<?= $postInfo['idx'] ?>" class="btn btn-primary">수정하기</a>
                 <a href="/bbs" class="btn btn-secondary">목록</a>
-                <a href="./delete?idx=<?= $post['idx'] ?>" class="btn btn-dark">삭제하기</a>
+                <a href="./delete?idx=<?= $postInfo['idx'] ?>" class="btn btn-dark">삭제하기</a>
                 <button class="btn btn-success" id="thumbsUp">
-                    추천 <?= $post['thumbs_up'] != 0 ? "(" . $post['thumbs_up'] . ")" : '' ?>
+                    추천 <?= $postInfo['thumbs_up'] != 0 ? "(" . $postInfo['thumbs_up'] . ")" : '' ?>
                     <span class="material-symbols-outlined" style="font-size:16px">thumb_up</span>
                 </button>
                 <!--추천에서 사용할 postIdx 값-->
@@ -105,19 +101,18 @@ include "part/header.php";
                 <hr/>
                 <h3>댓글</h3>
                 <?php
-                $replies = $conn->query("select * from replies where post_idx = " . $idx . " and parent_idx IS null order by idx")->fetchAll();
+                $replies = $reply->getReplies($idx);
                 if ($replies) {
-                    foreach ($replies as $reply) {
+                    foreach ($replies as $replyInfo) {
                         ?>
-
-                        <!-- 댓글 섹션 예시 -->
+                        <!-- 댓글 섹션 -->
                         <div class="mt-4 card">
                             <div class="card-body">
-                                <input type="hidden" class="reply-idx" value="<?= $reply['idx'] ?>"/>
+                                <input type="hidden" class="reply-idx" value="<?= $replyInfo['idx'] ?>"/>
                                 <div class="media-body mb-3">
-                                    <h5 class="mt-0"><?= $reply['name'] ?></h5>
-                                    <p class="mb-0">작성일: <?= $reply['created_at'] ?></p>
-                                    <?= nl2br($reply['content']) ?>
+                                    <h5 class="mt-0"><?= $replyInfo['name'] ?></h5>
+                                    <p class="mb-0">작성일: <?= $replyInfo['created_at'] ?></p>
+                                    <?= nl2br($replyInfo['content']) ?>
                                 </div>
                                 <button class="btn btn-primary btn-reply-edit" data-bs-toggle="modal"
                                         data-bs-target="#editModal">
@@ -134,17 +129,17 @@ include "part/header.php";
                         </div>
 
                         <?php
-                        $subReplies = $conn->query("select * from replies where parent_idx = " . $reply['idx'] . " order by idx")->fetchAll();
+                        $subReplies = $reply->getSubReplies($replyInfo['idx']);
                         if ($subReplies) {
-                            foreach ($subReplies as $subReply) {
+                            foreach ($subReplies as $subReplyInfo) {
                                 ?>
                                 <div class="mt-4 card ml-4">
                                     <div class="card-body">
-                                        <input type="hidden" class="reply-idx" value="<?= $subReply['idx'] ?>"/>
+                                        <input type="hidden" class="reply-idx" value="<?= $subReplyInfo['idx'] ?>"/>
                                         <div class="media-body mb-3">
-                                            <h5 class="mt-0"><?= $subReply['name'] ?></h5>
-                                            <p class="mb-0">작성일: <?= $subReply['created_at'] ?></p>
-                                            <?= nl2br($subReply['content']) ?>
+                                            <h5 class="mt-0"><?= $subReplyInfo['name'] ?></h5>
+                                            <p class="mb-0">작성일: <?= $subReplyInfo['created_at'] ?></p>
+                                            <?= nl2br($subReplyInfo['content']) ?>
                                         </div>
                                         <button class="btn btn-primary btn-reply-edit" data-bs-toggle="modal"
                                                 data-bs-target="#editModal">

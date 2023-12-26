@@ -18,7 +18,7 @@ class Reply extends BaseModel
      * @param $content
      * @return bool
      */
-    public function store($postIdx, $name, $pw, $content): bool
+    public function create($postIdx, $name, $pw, $content): bool
     {
         try {
             $hashed_pw = password_hash($pw, PASSWORD_DEFAULT);
@@ -153,7 +153,7 @@ class Reply extends BaseModel
      * @param $content
      * @return bool
      */
-    public function subReplyStore($postIdx, $parentIdx, $name, $pw, $content): bool
+    public function subReplyCreate($postIdx, $parentIdx, $name, $pw, $content): bool
     {
         try {
             $hashed_pw = password_hash($pw, PASSWORD_DEFAULT);
@@ -168,6 +168,44 @@ class Reply extends BaseModel
         } catch (PDOException  $e) {
             error_log($e->getMessage());
             return false;
+        }
+    }
+
+    /**
+     * @param $postIdx
+     * @return array
+     */
+    public function getReplies($postIdx): array
+    {
+        try {
+            $query = "SELECT * FROM replies WHERE post_idx = :post_idx AND parent_idx IS NULL ORDER BY idx DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'post_idx' => $postIdx,
+            ]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * @param $parentIdx
+     * @return array
+     */
+    public function getSubReplies($parentIdx): array
+    {
+        try {
+            $query = "SELECT * FROM replies WHERE parent_idx = :parent_idx ORDER BY idx DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'parent_idx' => $parentIdx,
+            ]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return [];
         }
     }
 }

@@ -23,13 +23,13 @@ class ReplyController extends Controller
 
         if ($this->parametersCheck($postIdx, $name, $pw, $content)) {
             if (empty($parentIdx)) {
-                if ($this->reply->store($postIdx, $name, $pw, $content)) {
+                if ($this->reply->create($postIdx, $name, $pw, $content)) {
                     $this->redirect('/bbs/post/read?idx=' . $postIdx, '댓글이 작성되었습니다.');
                 } else {
                     $this->redirectBack('댓글 작성에 실패했습니다.');
                 }
             } else {
-                if ($this->reply->subReplyStore($postIdx, $parentIdx, $name, $pw, $content)) {
+                if ($this->reply->subReplyCreate($postIdx, $parentIdx, $name, $pw, $content)) {
                     $this->redirect('/bbs/post/read?idx=' . $postIdx, '댓글이 작성되었습니다.');
                 } else {
                     $this->redirectBack('댓글 작성에 실패했습니다.');

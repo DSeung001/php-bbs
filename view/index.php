@@ -1,9 +1,7 @@
 <?php
+use Model\Post;
 
-use DB\Connection;
-
-$conn = new Connection();
-$conn = $conn->getConnection();
+$post = new Post();
 ?>
 <!doctype html>
 <?php
@@ -28,7 +26,8 @@ include "part/header.php";
                     <div class="form-inline full-width-form">
                         <div class="form-group mb-2 flex-fill">
                             <label for="searchInput" class="sr-only">검색</label>
-                            <input name="search" type="text" class="form-control w-100" id="searchInput" placeholder="Search"
+                            <input name="search" type="text" class="form-control w-100" id="searchInput"
+                                   placeholder="Search"
                                    value="<?= $_GET['search'] ?? '' ?>">
                         </div>
                         <button id="searchSubmit" type="submit" class="btn btn-primary mb-2">검색</button>
@@ -54,57 +53,46 @@ include "part/header.php";
         <?php
         // 현재 페이지
         $currentPage = $_GET['page'] ?? 1;
+        $searchWord = $_GET['search'] ?? '';
         $perPage = 5;
         $startPage = ($currentPage - 1) * $perPage;
 
         // 전체 게시글 수
-        $totalStmt = $conn->prepare("select count(idx) from posts where title like :search");
-        $totalStmt->bindValue('search', '%' . ($_GET['search'] ?? '') . '%');
-        $totalStmt->execute();
-        $total = $totalStmt->fetchColumn();
+        $total = $post->count($searchWord);
 
         // 전체 페이지 및 현재 보여줄 마지막 페이지
         $totalPage = ceil($total / $perPage);
         $endPage = $totalPage > $currentPage + 4 ? $currentPage + 4 : $totalPage;
+        $endPage = $endPage < 10 && $totalPage > 10 ? 10 : $endPage;
 
         // 게시글 목록 가져오기
-        $dataStmt = $conn->prepare("select p.*,
-        (SELECT COUNT(*) FROM replies r WHERE r.post_idx = p.idx) AS reply_count,
-        CASE WHEN TIMESTAMPDIFF(MINUTE, p.created_at, NOW()) <= 1440 THEN 1
-        ELSE 0 END AS is_new
-        from posts p
-        where p.title like :search
-        order by idx desc limit :start, :perPage");
-        $dataStmt->bindValue('search', '%' . ($_GET['search'] ?? '') . '%');
-        $dataStmt->bindParam('start', $startPage, PDO::PARAM_INT);
-        $dataStmt->bindParam('perPage', $perPage, PDO::PARAM_INT);
-        $dataStmt->execute();
-        $posts = $dataStmt->fetchAll();
+        $posts = $post->getPosts($searchWord, $startPage, $perPage);
 
         if ($posts) {
             $bonusIdx = 0;
-            foreach ($posts as $post) {
+            foreach ($posts as $postInfo) {
                 /// 30 글자 초과시 ... 저리
-                $title = $post["title"];
+                $title = $postInfo["title"];
                 if (strlen($title) > 30) {
-                    $title = str_replace($post["title"], mb_substr($post["title"], 0, 30, "utf-8") . "...", $post["title"]);
+                    // mb_substr: 한글이 깨지지 않도록 해줌
+                    $title = str_replace($postInfo["title"], mb_substr($postInfo["title"], 0, 30, "utf-8") . "...", $postInfo["title"]);
                 }
                 ?>
 
                 <tr>
                     <td><?= $total - ($startPage + $bonusIdx++) ?></td>
                     <td>
-                        <a href="./read?idx=<?= $post['idx'] ?>">
-                            <?= $title . " [" . $post['reply_count'] . "]"; ?>
-                            <?php if ($post['is_new']) { ?>
+                        <a href="./read?idx=<?= $postInfo['idx'] ?>">
+                            <?= $title . " [" . $postInfo['reply_count'] . "]"; ?>
+                            <?php if ($postInfo['is_new']) { ?>
                                 <span class="badge badge-primary">new</span>
                             <?php } ?>
                         </a>
                     </td>
-                    <td><?= $post['name'] ?></td>
-                    <td><?= $post['thumbs_up'] ?></td>
-                    <td><?= $post['hit'] ?></td>
-                    <td><?= $post['created_at'] ?></td>
+                    <td><?= $postInfo['name'] ?></td>
+                    <td><?= $postInfo['thumbs_up'] ?></td>
+                    <td><?= $postInfo['views'] ?></td>
+                    <td><?= $postInfo['created_at'] ?></td>
                 </tr>
                 <?php
             }

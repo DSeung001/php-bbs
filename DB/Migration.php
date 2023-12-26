@@ -14,7 +14,6 @@ class Migration
         $this->reply = new reply();
 
         $this->post->migrate();
-        echo "<hr/>";
         $this->reply->migrate();
     }
 }

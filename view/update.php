@@ -2,40 +2,41 @@
 <?php
 include "part/header.php";
 
-use DB\Connection;
+use Model\Post;
+
 ?>
 <body>
 <?php
 
-$conn = new connection();
-$conn = $conn->getConnection();
-$stmt = $conn->prepare("select * from posts where idx = :idx");
-$stmt->bindParam('idx', $_GET['idx']);
-$post = $stmt->execute();
-$post = $stmt->fetch();
-if ($post) {
+$post = new Post();
+$postInfo = $post->getPost($_GET['idx']);
+if ($postInfo) {
     ?>
     <div class="m-4">
         <div class="container mt-5">
-            <h3 class="d-inline"><a href="/bbs">자유게시판</a></h3>/<h4 class="d-inline">글 수정</h4>
+            <h3 class="d-inline">
+                <a href="/bbs">자유게시판</a>
+            </h3>
+            /<h4 class="d-inline">글 수정</h4>
             <p class="mt-1">글을 수정하는 공간입니다.</p>
 
             <form action="/bbs/post/update" method="post">
-                <span class="mr-2">작성일: <?= $post['created_at'] ?></span>
-                <span class="mr-2">수정일: <?= $post['updated_at'] ?></span>
-                <span class="mr-2">조회수: <?= $post['hit'] ?></span>
-                <span class="mr-2">추천수: <?= $post['thumbs_up'] ?></span>
+                <span class="mr-2">작성일: <?= $postInfo['created_at'] ?></span>
+                <span class="mr-2">수정일: <?= $postInfo['updated_at'] ?></span>
+                <span class="mr-2">조회수: <?= $postInfo['views'] ?></span>
+                <span class="mr-2">추천수: <?= $postInfo['thumbs_up'] ?></span>
 
                 <input type="hidden" name="idx" value="<?= $_GET['idx'] ?>">
 
                 <div class="form-group mt-3">
                     <label for="title">제목</label>
                     <input type="text" class="form-control" name="title" id="title" placeholder="제목을 입력하세요"
-                           value="<?= $post['title'] ?>">
+                           value="<?= $postInfo['title'] ?>">
                 </div>
 
                 <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="lock" name="lock" <?= $post['lock'] ? 'checked': ''?>>
+                    <input class="form-check-input" type="checkbox" id="lock"
+                           name="lock" <?= $postInfo['lock'] ? 'checked' : '' ?>>
                     <label class="form-check-label" for="lock">
                         비밀 글 여부
                     </label>
@@ -44,24 +45,25 @@ if ($post) {
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>Name</label>
-                        <p> <?= $post['name'] ?></p>
+                        <p> <?= $postInfo['name'] ?></p>
                     </div>
 
                     <div class="form-group col-md-6">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="pw" placeholder="Password를 입력해주세요.">
+                        <input type="password" class="form-control" id="password" name="pw"
+                               placeholder="Password를 입력해주세요.">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="content">내용</label>
                     <textarea class="form-control" name="content" rows="5" id="content"
-                              placeholder="내용을 입력하세요"><?= $post['content'] ?></textarea>
+                              placeholder="내용을 입력하세요"><?= $postInfo['content'] ?></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">저장하기</button>
                 <a href="/bbs" class="btn btn-secondary">목록</a>
-                <a href="./read?idx=<?= $post['idx'] ?>" class="btn btn-secondary">뒤로가기</a>
+                <a href="./read?idx=<?= $postInfo['idx'] ?>" class="btn btn-secondary">뒤로가기</a>
             </form>
         </div>
     </div>
