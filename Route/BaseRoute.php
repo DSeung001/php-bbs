@@ -2,10 +2,9 @@
 
 namespace Route;
 
-use Controller\Controller;
 use Utils\RouteUtils;
 
-abstract class Route
+abstract class BaseRoute
 {
     use RouteUtils;
 

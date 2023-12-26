@@ -13,12 +13,13 @@ class Post extends BaseModel
     }
 
     /**
-     * @param $search
-     * @param $start
-     * @param $perPage
+     * Post 목록을 가져옵니다.
+     * @param $search string 검색어
+     * @param $start int 시작할 데이터의 인덱스
+     * @param $perPage int 페이지마다 보여줄 데이터 수
      * @return array|false
      */
-    public function getPosts($search, $start, $perPage)
+    public function getPosts(string $search, int $start, int $perPage)
     {
         try {
             $query = "select p.*,
