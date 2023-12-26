@@ -13,8 +13,7 @@ if ($url == '/' || $url == '') {
 } else {
 
     $routes = array();
-    $routes[] = new PostRoute(new PostController());
-    $routes[] = new ReplyRoute(new ReplyController());
+    $routes[] = new PostRoute();
 
     $ok = false;
     foreach ($routes as $route) {
