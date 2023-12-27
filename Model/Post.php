@@ -67,6 +67,76 @@ class Post extends BaseModel
     }
 
     /**
+     * Post 수정
+     * @param $idx
+     * @param $pw
+     * @param $title
+     * @param $content
+     * @param $lock
+     * @return bool
+     */
+    public function update($idx, $pw, $title, $content, $lock): bool
+    {
+        try {
+            $query = "SELECT pw FROM posts WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx,
+            ]);
+            $check = $stmt->fetch();
+
+            // 비밀번호 체크
+            if (!$check || !password_verify($pw, $check['pw'])) {
+                return false;
+            }
+            // 업데이트
+            $query = "UPDATE posts SET title = :title, content = :content, `lock` = :lock WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([
+                'title' => $title,
+                'content' => $content,
+                'lock' => $lock == 'on' ? 1 : 0,
+                'idx' => $idx,
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Post 삭제
+     * @param $idx
+     * @param $pw
+     * @return bool
+     */
+    public function delete($idx, $pw): bool
+    {
+        try {
+            $query = "SELECT pw FROM posts WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx,
+            ]);
+            $check = $stmt->fetch();
+
+            // 비밀번호 체크
+            if (!$check || !password_verify($pw, $check['pw'])) {
+                return false;
+            }
+            // 삭제
+            $query = "DELETE FROM posts WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([
+                'idx' => $idx,
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Post 목록의 개수
      * @param $search string 검색어
      * @return int|mixed
