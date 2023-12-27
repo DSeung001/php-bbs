@@ -1,4 +1,5 @@
 <?php
+
 use Model\Post;
 
 $post = new Post();
@@ -51,12 +52,27 @@ include "part/header.php";
         </thead>
         <tbody>
         <?php
-        $startPage = 0;
-        $perPage = 10;
+        // 현재 페이지 설정 값
+        $currentPage = $_GET['page'] ?? 1;
         $searchWord = $_GET['search'] ?? '';
 
+        // 페이지마다 보여줄 아이템 개수
+        $perPage = 3;
+        // 페이지의 시작 인덱스 값
+        $startIndex = ($currentPage - 1) * $perPage;
+
+        // 전체 게시글 수
+        $total = $post->count($searchWord);
+
+        // 전체 페이지 개수
+        $totalPage = ceil($total / $perPage);
+
+        // 현재 페이지에서 보여줄 마지막 페이지
+        $endPage = $totalPage > $currentPage + 4 ? $currentPage + 4 : $totalPage;
+        $endPage = $endPage < 10 && $totalPage > 10 ? 10 : $endPage;
+
         // 게시글 목록 가져오기
-        $posts = $post->getPosts($searchWord, $startPage, $perPage);
+        $posts = $post->getPosts($searchWord, $startIndex, $perPage);
 
         if ($posts) {
             $bonusIdx = 0;
@@ -70,7 +86,7 @@ include "part/header.php";
                 ?>
 
                 <tr>
-                    <td><?= $postInfo['idx']?></td>
+                    <td><?= $total - ($startIndex + $bonusIdx++) ?></td>
                     <td>
                         <a href="./read?idx=<?= $postInfo['idx'] ?>">
                             <?= $title . " [" . $postInfo['reply_count'] . "]"; ?>
@@ -92,6 +108,29 @@ include "part/header.php";
         ?>
         </tbody>
     </table>
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link" data-page="1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <?php
+            for ($page = max($currentPage - 4, 1); $page <= $endPage; $page++) {
+                $isActive = $page == $currentPage ? 'active' : '';
+                echo "<li class='page-item $isActive'><span class='page-link' data-page='$page'>$page</span></li>";
+            }
+            ?>
+            <li class="page-item">
+                <a class="page-link" data-page="<?= $totalPage ?>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </body>
+<script src="/bbs/assets/script/index.js"></script>
 </html>

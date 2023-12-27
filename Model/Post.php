@@ -65,4 +65,23 @@ class Post extends BaseModel
             return false;
         }
     }
+
+    /**
+     * Post 목록의 개수
+     * @param $search string 검색어
+     * @return int|mixed
+     */
+    public function count(string $search)
+    {
+        try {
+            $query = "SELECT count(idx) FROM posts WHERE title like :search";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue('search', '%' . ($search ?? '') . '%');
+            $stmt->execute();
+            return $stmt->fetchColumn();
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return 0;
+        }
+    }
 }
