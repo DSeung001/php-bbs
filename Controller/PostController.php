@@ -38,4 +38,19 @@ class PostController extends BaseController
             $this->redirectBack('입력되지 않은 값이 있습니다.');
         }
     }
+
+    /**
+     * 추천 기능을 담당
+     * @return void
+     */
+    public function thumbsUp()
+    {
+        $postIdx = $_POST['post_idx'];
+
+        if ($this->parametersCheck($postIdx)) {
+            $this->echoJson($this->post->thumbsUp($postIdx));
+        } else {
+            $this->redirectBack('입력되지 않은 값이 있습니다.');
+        }
+    }
 }

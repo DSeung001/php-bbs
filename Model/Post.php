@@ -84,4 +84,91 @@ class Post extends BaseModel
             return 0;
         }
     }
+
+    /**
+     * Post 데이터 가져오기
+     * @param $idx int Post의 idx
+     * @return array|mixed
+     */
+    public function getPost(int $idx)
+    {
+        try {
+            $query = "SELECT * FROM posts WHERE idx = :idx LIMIT 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx
+            ]);
+            return $stmt->fetch();
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Post 조회 수 증가
+     * @param $idx int Post의 idx
+     * @return bool|void
+     */
+    public function increaseViews($idx)
+    {
+        try {
+            // post_views 쿠키가 없으면 조회수 증가
+            if (!isset($_COOKIE['post_views' . $idx])) {
+                $stmt = $this->conn->prepare("update posts set views = views + 1 where idx = :idx");
+                $stmt->bindParam('idx', $idx);
+                $stmt->execute();
+                // 조회수 증가 후 하루짜리 쿠키 생성
+                setcookie('post_views' . $idx, true, time() + 60 * 60 * 24, '/');
+                return true;
+            }
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Post 추천 기능
+     * @param $idx int Post의 idx
+     * @return array
+     */
+    public function thumbsUp(int $idx): array
+    {
+        try {
+            // 쿠키 체크
+            if (isset($_COOKIE["post_thumbs_up" . $idx])) {
+                return [
+                    'result' => false,
+                    'msg' => '이미 추천하셨습니다.'
+                ];
+            }
+
+            // 추천 수 증가
+            $query = "UPDATE posts SET thumbs_up = thumbs_up + 1 WHERE idx = :idx";
+            $result = $this->conn->prepare($query)->execute([
+                'idx' => $idx
+            ]);
+
+            // 결과 값 리턴 + 쿠키 생성
+            if ($result) {
+                setcookie("post_thumbs_up" . $idx, true,  time() + 60 * 60 * 24, "/");
+                return [
+                    'result' => true,
+                    'msg' => '추천되었습니다.'
+                ];
+            }
+            return [
+                'result' => false,
+                'msg' => '추천에 실패했습니다.'
+            ];
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return [
+                'result' => false,
+                'msg' => '알 수 없는 에러가 발생했습니다, 관리자에게 문의주세요.'
+            ];
+        }
+    }
+
 }
