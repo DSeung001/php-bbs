@@ -40,4 +40,29 @@ class Post extends BaseModel
             return [];
         }
     }
+
+    /**
+     * Post 추가
+     * @param $name
+     * @param $pw
+     * @param $title
+     * @param $content
+     * @return bool
+     */
+    public function create($name, $pw, $title, $content): bool
+    {
+        try {
+            $hashed_pw = password_hash($pw, PASSWORD_DEFAULT);
+            $query = "INSERT INTO posts (name, pw, title,content) VALUES (:name, :pw, :title, :content)";
+            return $this->conn->prepare($query)->execute([
+                'name' => $name,
+                'pw' => $hashed_pw,
+                'title' => $title,
+                'content' => $content
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }
