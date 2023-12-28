@@ -2,6 +2,7 @@
 require_once "bootstrap.php";
 
 use Route\PostRoute;
+use Route\ReplyRoute;
 
 // URL 요청
 $url = isset($_GET['url']) ? $_GET['url'] : '/';
@@ -12,6 +13,7 @@ if ($url == '/' || $url == '') {
 } else {
     $routes = array();
     $routes[] = new PostRoute();
+    $routes[] = new ReplyRoute();
 
     $ok = false;
     foreach ($routes as $route) {

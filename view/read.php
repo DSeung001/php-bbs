@@ -2,6 +2,7 @@
 <?php
 
 use Model\Post;
+use Model\Reply;
 
 include "part/header.php";
 ?>
@@ -14,6 +15,7 @@ include "part/header.php";
         <?php
         $idx = $_GET['idx'];
         $post = new Post();
+        $reply = new Reply();
 
         $postInfo = $post->getPost($idx);
 
@@ -71,7 +73,63 @@ include "part/header.php";
                 </button>
                 <!--추천에서 사용할 postIdx 값-->
                 <input type="hidden" id="postIdx" value="<?= $idx ?>">
+
+                <div class="mt-2">
+                    <hr/>
+                    <h5>댓글 작성</h5>
+                    <form action="/bbs/reply/create" method="post">
+                        <div class="form-group">
+                            <input type="hidden" name="post_idx" value="<?= $idx ?>">
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" name="name" placeholder="Name을 입력해주세요.">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="password">Password</label>
+                                    <input type="password" class="form-control" name="pw"
+                                           placeholder="Password를 입력해주세요.">
+                                </div>
+                            </div>
+
+                            <label for="content">내용:</label>
+                            <textarea name="content" class="form-control" id="content" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">댓글 작성</button>
+                    </form>
+                </div>
+                <hr/>
+                <h3>댓글</h3>
                 <?php
+                $replies = $reply->getReplies($idx);
+                if ($replies) {
+                    foreach ($replies as $replyInfo) {
+                        ?>
+                        <!-- 댓글 섹션 -->
+                        <div class="mt-4 card">
+                            <div class="card-body">
+                                <input type="hidden" class="reply-idx" value="<?= $replyInfo['idx'] ?>"/>
+                                <div class="media-body mb-3">
+                                    <h5 class="mt-0"><?= $replyInfo['name'] ?></h5>
+                                    <p class="mb-0">작성일: <?= $replyInfo['created_at'] ?></p>
+                                    <?= nl2br($replyInfo['content']) ?>
+                                </div>
+                                <button class="btn btn-primary btn-reply-edit" data-bs-toggle="modal"
+                                        data-bs-target="#editModal">
+                                    수정
+                                </button>
+                                <button class="btn btn-primary btn-reply-delete" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal">
+                                    삭제
+                                </button>
+                                <button class="btn btn-primary btnSubReply">
+                                    대댓글
+                                </button>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                }
             }
         } else {
             echo "<script>alert('존재하지 않는 게시물입니다.');history.back();</script>";
