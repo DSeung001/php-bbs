@@ -2,15 +2,18 @@
 namespace Controller;
 
 use Model\Post;
+use Model\Reply;
 
 class PostController extends BaseController
 {
     private $post;
+    private $reply;
 
     // 생성자를 통해 PostModel 객체 생성
     public function __construct()
     {
         $this->post = new Post();
+        $this->reply = new Reply();
     }
 
     /**
@@ -73,6 +76,7 @@ class PostController extends BaseController
 
         if ($this->parametersCheck($idx, $pw)) {
             if ($this->post->delete($idx, $pw)) {
+                $this->reply->deleteReplies($idx);
                 $this->redirect('/bbs', '글이 삭제되었습니다.');
             } else {
                 $this->redirectBack('글 삭제에 실패했습니다.');

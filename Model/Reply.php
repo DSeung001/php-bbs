@@ -217,4 +217,42 @@ class Reply extends BaseModel
             return [];
         }
     }
+
+    /**
+     * Post에 해당하는 댓글 삭제
+     * @param $postIdx
+     * @return bool
+     */
+    public function deleteReplies($postIdx): bool
+    {
+        try {
+            $query = "DELETE FROM replies WHERE post_idx = :post_idx";
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([
+                'post_idx' => $postIdx,
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Reply 하위의 SubReplies 삭제
+     * @param $parentIdx
+     * @return bool
+     */
+    public function deleteSubReplies($parentIdx): bool
+    {
+        try {
+            $query = "DELETE FROM replies WHERE parent_idx = :parent_idx";
+            $stmt = $this->conn->prepare($query);
+            return $stmt->execute([
+                'parent_idx' => $parentIdx,
+            ]);
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
 }

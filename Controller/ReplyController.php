@@ -86,6 +86,7 @@ class ReplyController extends BaseController
         $pw = $_POST['pw'];
 
         if ($this->parametersCheck($replyIdx, $pw)) {
+            $this->reply->deleteSubReplies($replyIdx);
             $this->echoJson($this->reply->delete($replyIdx, $pw));
         } else {
             $this->echoJson(['result' => false, 'msg' => '입력되지 않은 값이 있습니다.']);
