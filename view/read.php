@@ -129,6 +129,8 @@ include "part/header.php";
                         </div>
                         <?php
                     }
+                    include_once "part/editModal.php";
+                    include_once "part/deleteModal.php";
                 }
             }
         } else {
