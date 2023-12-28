@@ -83,6 +83,26 @@ class PostController extends BaseController
     }
 
     /**
+     * 게시글의 잠긴 걸 확인 후 해제를 담당
+     * @return void
+     */
+    public function lockCheck()
+    {
+        $idx = $_POST['idx'];
+        $pw = $_POST['pw'];
+
+        if ($this->parametersCheck($pw)) {
+            if ($this->post->lockCheck($idx, $pw)) {
+                $this->redirect('/bbs/post/read?idx=' . $idx, '비밀번호가 일치합니다.');
+            } else {
+                $this->redirectBack('비밀번호가 일치하지 않습니다.');
+            }
+        } else {
+            $this->redirectBack('입력되지 않은 값이 있습니다.');
+        }
+    }
+
+    /**
      * 추천 기능을 담당
      * @return void
      */

@@ -31,7 +31,7 @@ include "part/header.php";
                     <div class="form-group">
                         <input type="hidden" name="idx" value="<?= $idx ?>">
                         <label for="pw">Password</label>
-                        <input id="pw" type="text" class="form-control" name="pw" placeholder="비밀번호를 입력하세요">
+                        <input id="pw" type="password" class="form-control" name="pw" placeholder="비밀번호를 입력하세요">
                     </div>
                     <button type="submit" class="btn btn-primary">확인하기</button>
                     <a href="/bbs" class="btn btn-secondary">목록</a>

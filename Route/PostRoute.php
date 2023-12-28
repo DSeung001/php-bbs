@@ -29,6 +29,9 @@ class PostRoute extends BaseRoute
         } else if ($this->routeCheck($url, "post/delete", "POST")) {
             $PostController->delete();
             return true;
+        } else if ($this->routeCheck($url, "post/lockCheck", "POST")) {
+            $PostController->lockCheck();
+            return true;
         } else if ($this->routeCheck($url, "post/thumbsUp", "POST")) {
             $PostController->thumbsUp();
             return true;

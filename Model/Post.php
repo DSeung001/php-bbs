@@ -199,6 +199,36 @@ class Post extends BaseModel
     }
 
     /**
+     * Post 잠김 확인 후 해제
+     * @param $idx
+     * @param $pw
+     * @return bool
+     */
+    public function lockCheck($idx, $pw): bool
+    {
+        try {
+            echo $idx;
+            $query = "SELECT pw FROM posts WHERE idx = :idx";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'idx' => $idx,
+            ]);
+            $check = $stmt->fetch();
+
+            // 비밀번호 체크
+            if (!$check || !password_verify($pw, $check['pw'])) {
+                return false;
+            }
+            // 1시간짜리 쿠키 생성
+            setcookie("post_key" . $idx, $pw, time() + 3600, "/");
+            return true;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Post 추천 기능
      * @param $idx int Post의 idx
      * @return array
