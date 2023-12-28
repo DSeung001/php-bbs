@@ -128,6 +128,31 @@ include "part/header.php";
                             </div>
                         </div>
                         <?php
+                        $subReplies = $reply->getSubReplies($replyInfo['idx']);
+                        if ($subReplies) {
+                            foreach ($subReplies as $subReplyInfo) {
+                                ?>
+                                <div class="mt-4 card ml-4">
+                                    <div class="card-body">
+                                        <input type="hidden" class="reply-idx" value="<?= $subReplyInfo['idx'] ?>"/>
+                                        <div class="media-body mb-3">
+                                            <h5 class="mt-0"><?= $subReplyInfo['name'] ?></h5>
+                                            <p class="mb-0">작성일: <?= $subReplyInfo['created_at'] ?></p>
+                                            <?= nl2br($subReplyInfo['content']) ?>
+                                        </div>
+                                        <button class="btn btn-primary btn-reply-edit" data-bs-toggle="modal"
+                                                data-bs-target="#editModal">
+                                            수정
+                                        </button>
+                                        <button class="btn btn-primary btn-reply-delete" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal">
+                                            삭제
+                                        </button>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                        }
                     }
                     include_once "part/editModal.php";
                     include_once "part/deleteModal.php";

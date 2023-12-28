@@ -169,4 +169,52 @@ class Reply extends BaseModel
             return [];
         }
     }
+
+    /**
+     * 대댓글 만들기
+     * @param $postIdx
+     * @param $parentIdx
+     * @param $name
+     * @param $pw
+     * @param $content
+     * @return bool
+     */
+    public function subReplyCreate($postIdx, $parentIdx, $name, $pw, $content): bool
+    {
+        try {
+            $hashed_pw = password_hash($pw, PASSWORD_DEFAULT);
+            $query = "INSERT INTO replies (post_idx, parent_idx, name, pw, content) VALUES (:post_idx, :parent_idx, :name, :pw, :content)";
+            return $this->conn->prepare($query)->execute([
+                'post_idx' => $postIdx,
+                'parent_idx' => $parentIdx,
+                'name' => $name,
+                'pw' => $hashed_pw,
+                'content' => $content
+            ]);
+        } catch (PDOException  $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+
+    /**
+     * 대댓글 목록 가져오기
+     * @param $parentIdx
+     * @return array
+     */
+    public function getSubReplies($parentIdx): array
+    {
+        try {
+            $query = "SELECT * FROM replies WHERE parent_idx = :parent_idx ORDER BY idx DESC";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                'parent_idx' => $parentIdx,
+            ]);
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return [];
+        }
+    }
 }

@@ -119,4 +119,41 @@ $(document).ready(function () {
             }
         })
     })
+
+    // 대댓글 작성 폼 생성 기능
+    $(".btnSubReply").click(function (){
+        let replyIdx = $(this).parent().find(".reply-idx").val();
+        let postIdx = $("#postIdx").val();
+        let subReplyFormExist = $("#subReplyForm").length > 0;
+        if (subReplyFormExist) {
+            $("#subReplyForm").remove();
+        }
+
+        $(this).parent().parent().after(
+            "<div class=\"mt-4 card ml-4\" id=\"subReplyForm\">\n" +
+            "            <div class=\"card-body\">\n" +
+            "                <form action=\"/bbs/reply/create\" method=\"post\">\n" +
+            "                    <h5>대댓글</h5>\n" +
+            "                    <input name=\"post_idx\" type=\"hidden\" class=\"reply-idx\" value=\""+postIdx+"\"/>\n" +
+            "                    <div class=\"media-body mb-3\">\n" +
+            "                        <input name=\"parent_idx\" type=\"hidden\" name=\"post_idx\" value=\""+replyIdx+"\">\n" +
+            "                        <div class=\"form-row\">\n" +
+            "                            <div class=\"form-group col-md-6\">\n" +
+            "                                <label for=\"name\">Name</label>\n" +
+            "                                <input type=\"text\" class=\"form-control\" name=\"name\" placeholder=\"Name을 입력해주세요.\">\n" +
+            "                            </div>\n" +
+            "                            <div class=\"form-group col-md-6\">\n" +
+            "                                <label for=\"password\">Password</label>\n" +
+            "                                <input type=\"password\" class=\"form-control\" name=\"pw\"\n" +
+            "                                       placeholder=\"Password를 입력해주세요.\">\n" +
+            "                            </div>\n" +
+            "                        </div>\n" +
+            "                        <label for=\"content\">내용:</label>\n" +
+            "                        <textarea name=\"content\" class=\"form-control\" id=\"content\" rows=\"3\"></textarea>\n" +
+            "                    </div>\n" +
+            "                    <button class=\"btn btn-primary\" type=\"submit\">댓글 작성</button>\n" +
+            "                </form>\n" +
+            "            </div>\n" +
+            "        </div>")
+    })
 });
